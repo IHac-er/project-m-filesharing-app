@@ -1,0 +1,888 @@
+/* #region BODY */
+.page {
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at top, #131313, #171717);
+  color: white;
+}
+/* #endregion BODY */
+
+/* #region HEADER */
+.header {
+  position: absolute; /* Pins the header to the top of the screen */
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* Pushes logo left, button right */
+  align-items: center;
+  padding: 30px 60px; /* Matches the horizontal padding of your card */
+  box-sizing: border-box;
+  z-index: 10; /* Keeps it above the glowing background elements */
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 1px;
+  opacity: 0.9;
+  /* This creates that exact soft white/blue ambient glow from the image */
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 
+               0 0 30px rgba(59, 130, 246, 0.4); 
+}
+
+/* GROUPS THE RIGHT SIDE HEADER ITEMS */
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 25px; /* Perfect spacing between the text and the icon */
+}
+
+/* THE ABOUT LINK */
+.navLink {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6); /* Dimmed initially */
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+  /* ADD THESE 3 LINES */
+  text-decoration: underline;
+  text-decoration-color: transparent; /* Keeps the line invisible until hovered */
+  text-underline-offset: 6px;         /* Pushes the line down so it doesn't hug the text tightly */
+}
+
+.navLink:hover {
+  color: #3b82f6; /* Lights up blue on hover */
+  text-decoration-color: #3b82f6; /* Underline fades in */
+}
+
+.settingsButton {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  opacity: 0.8; /* Slightly dimmed by default */
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.settingsButton:hover {
+  opacity: 1; /* Brightens up on hover */
+  background: rgba(255, 255, 255, 0.05); /* Very faint glass background */
+  transform: rotate(180deg); /* A nice touch: the gear actually spins when hovered! */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+/* #endregion HEADER */
+
+/* #region CARD CONTAINER */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f1115; /* Match the dark background of the image */
+  color: white;
+}
+
+.card {
+  display: flex;
+  gap: 40px;
+  padding: 50px 60px;  
+  border-radius: 16px; 
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  width: 750px; 
+  
+  /* --- REQUIRED FOR PSEUDO-ELEMENT --- */
+  position: relative; /* Makes the card the reference point for inner positioning */
+  z-index: 1;         /* Ensures card content stays ON TOP of the inner border */
+  /* ----------------------------------- */
+
+  /* THE OUTER LINE (Standard Border) */
+  /* Keep this very subtle and slightly translucent */
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+  
+  /* Main card drop shadow for depth against background */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); 
+}
+
+/* THE INNER LINE (Pseudo-element) */
+.card::after {
+  content: ''; /* Required for pseudo-elements to render */
+  position: absolute;
+  
+  /* Step 1: Position it exactly inside the parent card */
+  top: 7px;    /* Creating a 3px gap between the two lines */
+  right: 7px;
+  bottom: 7px;
+  left: 7px;
+  
+  /* Step 2: Set the radius slightly tighter so the gap is consistent 
+     Formula: [Outer Radius] - [Inner Gap] = [16px] - [3px] = 13px */
+  border-radius: 9px; 
+  
+  /* Step 3: Draw the second, sharp, inner line. 
+     Maybe make this one slightly fainter than the outer line. */
+  border: 1px solid rgba(255, 255, 255, 0.07); 
+  
+  /* Step 4: Keep it non-interactive and layered behind content */
+  pointer-events: none; 
+  z-index: -1; 
+}
+
+/* SECTIONS */
+.cardSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1; /* Allows both sides to take up exactly 50% of available space */
+}
+
+.cardSection h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  letter-spacing: 0.5px;
+}
+
+.dividerVertical {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 0 10px;
+}
+
+/* BUTTONS */
+.primaryButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px; /* Space between text and icon */
+  background: linear-gradient(135deg, #4f93f6, #2563eb);
+  border: none;
+  padding: 14px 16px;  
+  border-radius: 8px; 
+  color: white;
+  font-size: 15px; 
+  font-weight: 500;
+  width: 100%;  
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px); 
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.glowButton {
+  /* OLD VALUES: box-shadow: 0 0 25px rgba(59, 130, 246, 0.4); */
+
+  /* NEW, SUBTLE VALUES: Reduced spread and lower opacity */
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); 
+  margin-bottom: 15px;
+}
+
+/* INPUT FIELD */
+.input {
+  width: 100%;
+  
+  /* We remove the horizontal padding here, we will handle it below */
+  padding: 14px 0; 
+  font-size: 24px; 
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.4); 
+  color: white;
+  outline: none;
+  
+  /* --- THE CENTERING FIX --- */
+  text-align: center; 
+  
+  /* 1. Reduce this slightly so the 4th dash doesn't get pushed out */
+  letter-spacing: 30px; 
+  
+  /* 2. Add left padding equal to the letter-spacing. 
+        This perfectly balances the invisible space on the right of the 4th dash! */
+  padding-left: 30px; 
+  /* ------------------------- */
+  
+  text-transform: uppercase; 
+  transition: 0.2s;
+  margin-bottom: 15px;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.3); 
+  /* Make sure the placeholder inherits the exact same spacing */
+  letter-spacing: 30px; 
+}
+
+.input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* TEXT & ICONS */
+.smallText {
+  font-size: 12px;
+  opacity: 0.6;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+/* THE ALIGNMENT FIX FOR THE LEFT CARD */
+.iconSpacer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  
+  /* Matches the exact height + margin of the input field on the right */
+  height: 84px; 
+  margin-bottom: 15px; 
+}
+
+/* THE ICON STYLING */
+.roomIcon {
+  color: #3b82f6; /* Brand blue */
+  opacity: 0.8;
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.4)); /* Soft blue glow */
+  transition: all 0.3s ease;
+}
+
+.cardSection:hover .roomIcon {
+  opacity: 1;
+  transform: translateY(-2px) scale(1.05); /* Slight pop when the user hovers over the left side */
+  filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.6));
+}
+/* #endregion CARD CONTAINER */
+
+/* #region DESCRIPTION */
+.about {
+  min-height: calc(100vh - 80px); /* Takes up the next full screen below the hero */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 20px;
+  background-color: #0f1115; /* Maintain the dark background */
+}
+
+/* THE GLASS PANEL CONTAINER */
+.aboutContainer {
+  display: flex;
+  gap: 60px;
+  max-width: 1000px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 60px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* LEFT SIDE: TYPOGRAPHY */
+.aboutContent {
+  flex: 1.2; /* Takes up slightly more space than the features */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.aboutContent h2 {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  /* Gives the heading a premium subtle gradient instead of flat white */
+  background: linear-gradient(135deg, #ffffff, #9ca3af);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.aboutContent p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.65); /* Softer white for easier reading */
+  margin: 0;
+}
+
+/* RIGHT SIDE: FEATURES BOX */
+.aboutFeatures {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.25); /* Darker inset box */
+  border-radius: 12px;
+  padding: 35px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.aboutFeatures h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 25px;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.aboutFeatures ul {
+  list-style: none; /* Removes default bullets */
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.aboutFeatures li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
+}
+
+.featureIcon {
+  color: #3b82f6; /* Your brand blue */
+  flex-shrink: 0; /* Prevents icons from squishing on smaller screens */
+  opacity: 0.9;
+}
+/* #endregion DESCRIPTION */
+
+/* #region FOOTER */
+.footer {
+  width: 100%;
+  padding: 30px 60px; /* Matches the horizontal padding of your header */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08); /* Subtle separator line */
+  background-color: #0f1115;
+  color: rgba(255, 255, 255, 0.4); /* Dimmed text for low priority info */
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+/* ALIGNMENT WRAPPERS */
+.footerLeft {
+  display: flex;
+  align-items: center;
+}
+
+.footerRight {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Space between the disclaimer and the link */
+}
+
+/* DISCLAIMER TEXT */
+.footerNote {
+  display: none; /* We will hide this on mobile, but keep it on desktop */
+}
+
+@media (min-width: 768px) {
+  .footerNote {
+    display: block; 
+  }
+}
+
+/* CLICKABLE LINK BUTTON */
+.footerLink {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent; /* Hides underline until hover */
+  text-underline-offset: 4px;
+  transition: all 0.2s ease;
+}
+
+.footerLink:hover {
+  color: #3b82f6; /* Lights up blue on hover */
+  text-decoration-color: #3b82f6; /* Underline fades in */
+}
+
+/* MAKES THE T&C MODAL SLIGHTLY WIDER THAN SETTINGS */
+.termsModal {
+  width: 550px; 
+}
+
+/* THE SCROLLABLE TEXT AREA */
+.termsScrollArea {
+  max-height: 50vh; /* Prevents the modal from extending off the screen */
+  overflow-y: auto;
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  padding-right: 15px; /* Leaves room for the scrollbar */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+}
+
+.termsScrollArea strong {
+  color: #ffffff;
+  font-size: 14.5px;
+}
+
+/* CUSTOM, SLEEK SCROLLBAR FOR THE MODAL */
+.termsScrollArea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.termsScrollArea::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.termsScrollArea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.termsScrollArea::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+/* #endregion FOOTER */
+
+/* #region SETTINGS MODAL */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6); /* Darkens the webpage behind the modal */
+  backdrop-filter: blur(8px);     /* Blurs the webpage behind the modal */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensures it sits on top of everything else */
+}
+
+/* THE GLASS MODAL BOX */
+.modal {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 35px 40px;
+  width: 400px;
+  max-width: 90%; /* Keeps it responsive on mobile phones */
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+/* Add this near your other modal styles */
+.modalSubtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6); 
+  margin-top: 5px;     /* CHANGED: Fixed the negative margin overlap */
+  margin-bottom: 20px; /* CHANGED: Added more breathing room for the inputs */
+  line-height: 1.4;
+}
+
+/* THE NORMAL TEXT INPUT */
+.modalInput {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3); /* Dark inset look */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box; /* Ensures padding doesn't widen the input */
+}
+
+.modalInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* BUTTON CONTAINER AND LAYOUT */
+.modalButtons {
+  display: flex;
+  justify-content: flex-end; /* Pushes buttons to the right */
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* SECONDARY CANCEL BUTTON */
+.modalCancelButton {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modalCancelButton:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* PRIMARY SAVE BUTTON */
+.modalSaveButton {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modalSaveButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.modal {
+  animation: popup 0.2s ease;
+}
+
+@keyframes popup {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* --- WIDER MODAL FOR SETTINGS --- */
+.settingsModalWide {
+  width: 650px;
+  max-width: 95%;
+  padding: 0; /* Remove padding so the sidebar touches the edges */
+  overflow: hidden;
+}
+
+.onboardingView {
+  /* Removed the 24px padding to prevent double-padding inside the modal */
+  display: flex;
+  flex-direction: column;
+}
+
+.onboardingAudio {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08); /* A nice subtle line separating it from the input */
+}
+
+/* --- TWO-COLUMN LAYOUT --- */
+.settingsLayout {
+  display: flex;
+  min-height: 400px;
+}
+
+.settingsSidebar {
+  width: 35%;
+  background: rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebarTitle {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 10px;
+  padding-left: 10px;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.tabButton:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.activeTab {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #3b82f6 !important;
+}
+
+/* --- RIGHT CONTENT AREA --- */
+.settingsContent {
+  width: 65%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabSection {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tabSection h2 {
+  margin: 0 0 5px 0;
+}
+
+.audioOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+  margin-bottom: auto; /* Pushes the "Done" button to the bottom */
+}
+
+.subOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: opacity 0.2s ease;
+}
+
+.dividerHorizontal {
+  height: 1px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 5px 0;
+}
+
+/* --- CUSTOM CHECKBOX STYLING --- */
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.checkbox {
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #3b82f6; /* Makes the native checkmark brand blue */
+}
+
+.checkboxText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checkboxText strong {
+  font-size: 15px;
+  color: white;
+}
+
+.checkboxText span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+/* #endregion SETTINGS MODAL */
+
+/* #region TOAST NOTIFICAITON */
+/* WRAPPER TO CENTER IT AT THE TOP */
+.toastOverlay {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 2000; /* Ensures it sits above literally everything else */
+  pointer-events: none; /* Clicks pass right through it */
+}
+
+/* THE GLASS TOAST CARD */
+.toastCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(20, 10, 10, 0.85); /* Very dark, subtle red tint */
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(239, 68, 68, 0.3); /* Soft red border */
+  border-radius: 12px;
+  padding: 14px 24px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 15px 35px rgba(239, 68, 68, 0.15); /* Faint red glow */
+  
+  /* Smooth drop-down animation */
+  animation: slideDownToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.toastIcon {
+  color: #ef4444; /* Bright red Lucide icon */
+}
+
+/* THE ANIMATION */
+@keyframes slideDownToast {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+/* #endregion TOAST NOTIFICAITON */
+
+/* #region MOBILE RESPONSIVENESS */
+@media (max-width: 768px) {
+  /* 1. HEADER: Tighter padding and slightly smaller logo */
+  .header {
+    padding: 20px 25px;
+  }
+  .logo {
+    font-size: 22px;
+  }
+  .headerRight {
+    gap: 15px;
+  }
+
+  /* 2. HERO CARD: Stack the columns and shrink the fixed width */
+  .card {
+    width: 90%;          /* Drops the 750px fixed width */
+    flex-direction: column; /* Stacks Host on top of Join */
+    padding: 40px 30px;
+    gap: 20px;
+    margin-top: 80px;    /* Pushes it down so it doesn't hit the header */
+  }
+
+  /* Magically turns your vertical line into a horizontal line! */
+  .dividerVertical {
+    width: 100%;
+    height: 1px;
+    margin: 15px 0;
+  }
+
+  /* Adjust the input spacing so it doesn't overflow tiny phone screens */
+  .input {
+    font-size: 20px;
+    letter-spacing: 20px;
+    padding-left: 20px;
+  }
+
+  /* 3. ABOUT SECTION: Stack the text and features */
+  .about {
+    padding: 60px 20px;
+  }
+  .aboutContainer {
+    flex-direction: column;
+    padding: 40px 30px;
+    gap: 40px;
+  }
+  .aboutContent h2 {
+    font-size: 26px;
+  }
+
+  /* 4. FOOTER: Stack and center the links */
+  .footer {
+    flex-direction: column;
+    padding: 30px 20px;
+    gap: 15px;
+    text-align: center;
+  }
+  .footerRight {
+    justify-content: center;
+  }
+
+  /* 5. MODALS/TOASTS: Keep them from touching the screen edges */
+  /* This 'not' trick ensures the padding only applies to the login modal, not the settings modal! */
+  .modal:not(.settingsModalWide) {
+    padding: 30px 25px; 
+  }
+
+  /* --- NEW: MOBILE TABBED SETTINGS FIX --- */
+  .settingsLayout {
+    flex-direction: column; /* Stacks the sidebar on top of the content */
+    min-height: auto;
+  }
+
+  .settingsSidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 15px;
+    flex-direction: row; /* Puts tabs side-by-side horizontally instead of vertically */
+    overflow-x: auto;    /* Lets the tabs scroll left/right if needed */
+  }
+
+  .sidebarTitle {
+    display: none; /* Hides "SETTINGS" text to save precious screen space */
+  }
+
+  .tabButton {
+    width: auto;
+    white-space: nowrap; /* Stops the tab text from stacking awkwardly */
+    padding: 8px 16px;
+  }
+
+  .settingsContent {
+    width: 100%;
+    padding: 20px 15px;
+  }
+}
+/* #endregion MOBILE RESPONSIVENESS */
+
+/* --- ONBOARDING DISCLAIMER --- */
+.termsDisclaimer {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4); /* Very dim grey/white */
+  text-align: center;
+  margin-top: 15px;
+  line-height: 1.4;
+}

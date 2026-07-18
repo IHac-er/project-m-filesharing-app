@@ -1,0 +1,1218 @@
+/* #region PAGE */
+.page {
+  height: 100vh;           /* Locks the app to the screen height */
+  display: flex;
+  flex-direction: column;
+  background-color: #0f1115; /* Same dark theme */
+  color: white;
+  overflow: hidden;        /* Prevents the whole browser window from scrolling */
+}
+/* #endregion PAGE */
+
+/* #region HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Clean separator line */
+  z-index: 10;
+}
+
+.brand {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* Soft brand glow */
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* THE CLICKABLE CODE PILL (Brand Blue Theme) */
+.codePill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(59, 130, 246, 0.1); 
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #3b82f6; 
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px; 
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.codePill:hover {
+  background: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); 
+  transform: translateY(-1px);
+}
+
+/* THE COPY ICON */
+.copyIcon {
+  color: rgba(59, 130, 246, 0.7); /* Slightly muted blue */
+  transition: color 0.2s ease;
+  letter-spacing: normal; /* Prevents the 3px letter spacing from stretching the SVG */
+}
+
+.codePill:hover .copyIcon {
+  color: #ffffff; /* Pops to white when the pill is hovered! */
+}
+
+/* The Leave Button styling */
+.leaveButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.1); /* Very faint red */
+  color: #ef4444; /* Standard destructive red */
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.leaveButton:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
+
+/* --- THE SUCCESS TOAST (If you don't already have it in this file) --- */
+.toastOverlay {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.toastCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(10, 20, 10, 0.85); /* Subtle dark green tint */
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(34, 197, 94, 0.3); /* Green border */
+  border-radius: 12px;
+  padding: 14px 24px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 15px 35px rgba(34, 197, 94, 0.15); /* Green glow */
+  animation: slideDownToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.toastIconSuccess {
+  color: #22c55e; /* Green lucide icon */
+}
+
+@keyframes slideDownToast {
+  from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* THE CLICKABLE CODE BADGE */
+.codeBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(59, 130, 246, 0.1); /* Faint blue tint */
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #3b82f6; /* Brand blue text */
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 3px; /* Spreads the code out slightly */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.codeBadge:hover {
+  background: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); /* Glows blue on hover */
+  transform: translateY(-1px);
+}
+
+/* 3. THE CHAT AREA LAYOUT */
+.chatContainer {
+  flex: 1;                 /* Takes up all vertical space below the header */
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px;       /* Keeps the chat from stretching too wide on massive monitors */
+  width: 100%;
+  margin: 0 auto;          /* Centers the chat box horizontally */
+  padding: 20px;
+  overflow: hidden;        /* Keeps the messages boundary locked */
+}
+
+.chatContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0; /* Ensures it sits at the very back */
+  pointer-events: none; /* Prevents it from blocking clicks/scrolls */
+  
+  /* THE MAGIC: A pure CSS dot matrix pattern */
+  background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size: 18px 18px; /* Adjust this to make the dots closer or further apart */
+  
+  opacity: 0.4; /* Keep it incredibly subtle (between 0.05 and 0.2) */
+}
+
+/* 4. THE SCROLLING MESSAGE ZONE */
+.messages {
+  flex: 1;                 /* Takes up all space above the input box */
+  overflow-y: auto;        /* THIS is where the vertical scrolling happens! */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;               /* Space between individual messages */
+  padding-right: 10px;     
+  
+  /* Hides the scrollbar for a cleaner look while keeping scroll functionality */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.messages::-webkit-scrollbar {
+  display: none;
+}
+
+/* THE HEADER SHARE ICON */
+.shareIconButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shareIconButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* THE MODAL OVERLAY */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+/* THE SHARE MODAL BOX */
+.shareModal {
+  background: #111317; /* Solid dark background to make the white QR code pop */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  width: 360px;
+  max-width: 90%;
+  padding: 24px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: popIn 0.2s ease-out;
+}
+
+.shareHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shareHeader h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.closeModalButton {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.closeModalButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* THE QR CODE DISPLAY */
+.qrContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.qrWrapper {
+  background: rgba(255, 255, 255, 0.03); /* Faint box behind the QR */
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.qrContainer p {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+/* THE LINK & COPY BAR */
+.shareLinkContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.shareInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  outline: none;
+  padding: 4px 8px;
+}
+
+.shareCopyBtn {
+  background: rgba(59, 130, 246, 0.15); /* Brand blue tint */
+  color: #3b82f6;
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.shareCopyBtn:hover {
+  background: rgba(59, 130, 246, 0.3);
+  color: #ffffff;
+}
+/* #endregion HEADER */
+
+/* #region CHAT CONTAINER */
+/* 1. SYSTEM ALERTS (e.g., "User joined the room") */
+.systemMessage {
+  align-self: center; 
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4); 
+  border-radius: 20px; 
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  /* --- THE CHANGES FOR A SMALLER CAPSULE --- */
+  font-size: 9px;       /* Reduced from 12px for a more subtle look */
+  padding: 4px 12px;     /* Tighter padding inside the pill */
+  margin: 6px 0;         /* Less vertical margin so it doesn't push messages too far apart */
+  /* ----------------------------------------- */
+}
+
+/* 2. BASE STYLES FOR ALL CHAT BUBBLES */
+.myMessage, .otherMessage {
+  max-width: 70%; /* Prevents text from stretching 100% across the screen */
+  padding: 12px 18px;
+  font-size: 15px;
+  line-height: 1.5;
+  word-wrap: break-word; /* Stops long links or spam from breaking the layout */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; /* Smooth entry */
+}
+
+/* 3. MY MESSAGES (Sent - Right Side) */
+.myMessage {
+  align-self: flex-end; /* Pushes the bubble to the right wall */
+  background: linear-gradient(135deg, #3b82f6, #2563eb); /* Brand blue */
+  color: white;
+  /* The Chat Tail Trick: Top-Left, Top-Right, Bottom-Right (sharp), Bottom-Left */
+  border-radius: 16px 16px 4px 16px; 
+}
+
+/* 4. OTHER MESSAGES (Received - Left Side) */
+.otherMessage {
+  align-self: flex-start; /* Pushes the bubble to the left wall */
+  background: rgba(255, 255, 255, 0.05); /* Dark glass look */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  /* The Chat Tail Trick: Top-Left, Top-Right, Bottom-Right, Bottom-Left (sharp) */
+  border-radius: 16px 16px 16px 4px; 
+}
+
+/* 5. A SUBTLE ENTRY ANIMATION (Optional but highly recommended) */
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* THE FILE CARD LAYOUT */
+.fileCard {
+  min-width: 250px; /* Ensures the card doesn't squish if the filename is short */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* TOP HALF: ICON AND TEXT */
+.fileInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fileIconWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15); /* Slightly lighter box for the icon */
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.fileDetails {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevents long names from breaking the layout */
+}
+
+.fileName {
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis; /* Adds "..." if the filename is too long */
+  overflow: hidden;
+}
+
+.fileSize {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+/* BOTTOM HALF: THE DOWNLOAD ACTION */
+.downloadButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.downloadButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* PLACEHOLDER WHILE UPLOADING/PROCESSING */
+.downloadingState {
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.6;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-style: italic;
+}
+/* #endregion CHAT CONTAINER */
+
+/* #region INPUT */
+/* THE INPUT BAR CONTAINER */
+/* THE OUTER SPACING */
+.inputArea {
+  display: flex;
+  justify-content: center; /* Centers the input box in the screen */
+  padding: 20px;
+  background: transparent; /* Let the page background show through */
+  margin-top: auto;
+}
+
+/* THE NEW UNIFIED CONTAINER (The "Gemini" Look) */
+.unifiedInput {
+  position: relative;        /* <-- ADD THIS: Acts as the anchor for the floating dots */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #1e1f22; 
+  border-radius: 32px;       
+  padding: 10px 16px;        
+  width: 100%;
+  max-width: 850px;          
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); 
+  transition: background-color 0.2s ease;
+}
+
+/* Slightly lighten the whole box when the input is focused */
+.unifiedInput:focus-within {
+  background-color: #252629; 
+}
+
+/* 1. THE FILE INPUT */
+.hiddenFileInput {
+  display: none;
+}
+
+.iconButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;   /* Stripped the old circular background */
+  color: #c4c7c5;            /* Soft gray icon */
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+.iconButton:hover:not(.disabled) {
+  color: #ffffff;            /* Lights up white on hover */
+  background: rgba(255, 255, 255, 0.08); /* Subtle highlight circle behind icon */
+}
+
+.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 2. THE TEXT INPUT */
+/* THE TEXT INPUT (Now a Textarea) */
+.chatInput {
+  flex: 1;
+  background: transparent;   
+  border: none;              
+  color: #e3e3e3;            
+  font-size: 16px;
+  padding: 12px 4px;         
+  outline: none;
+  
+  /* --- THE NEW TEXTAREA FIXES --- */
+  font-family: inherit;      /* Forces it to use your clean website font */
+  resize: none;              /* Removes the ugly drag handle in the bottom right */
+  overflow-y: auto;          /* Allows scrolling inside the box if it passes 5 lines */
+  line-height: 1.5;          /* Makes multi-line text easier to read */
+  max-height: 120px;         /* The absolute limit before it starts scrolling */
+  
+  /* Hide the scrollbar for a cleaner look */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chatInput::-webkit-scrollbar {
+  display: none;
+}
+
+.chatInput::placeholder {
+  color: #8e918f;            
+}
+
+/* 3. THE SEND BUTTON */
+.sendButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;   /* Removed the blue gradient */
+  color: #c4c7c5;            /* Soft gray to match the paperclip */
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.sendButton:hover:not(:disabled) {
+  color: #ffffff;            /* Lights up on hover */
+  background: rgba(255, 255, 255, 0.08); /* Subtle highlight circle */
+}
+
+.sendButton:disabled {
+  color: #5f6368;            /* Darker gray when disabled */
+  cursor: not-allowed;
+}
+
+/* THE TYPING INDICATOR WRAPPER */
+.typingIndicatorWrapper {
+  position: absolute;        /* <-- ADD THIS: Removes it from standard layout */
+  bottom: 100%;              /* <-- ADD THIS: Pushes it exactly above the input box */
+  left: 0;                   /* <-- ADD THIS: Aligns it to the left edge */
+  margin-bottom: 15px;       /* Pushes it up slightly so it doesn't touch the input */
+  margin-left: 20px;         /* Indents it slightly so it matches your input text alignment */
+  z-index: 10;
+}
+
+/* THE BUBBLE */
+.typingIndicator {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 18px;
+  border-bottom-left-radius: 4px; /* Gives it the chat bubble tail */
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  width: fit-content;
+}
+
+/* THE BOUNCING DOTS */
+.typingIndicator span {
+  width: 6px;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.typingIndicator span:nth-child(1) { animation-delay: -0.32s; }
+.typingIndicator span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* --- CLICKABLE CHAT LINKS --- */
+.chatLink {
+  color: inherit; /* Inherits white/light-gray from the parent bubble */
+  text-decoration: underline;
+  text-underline-offset: 3px; /* Pushes the line down so it looks cleaner */
+  text-decoration-color: rgba(255, 255, 255, 0.5); /* Faint underline initially */
+  font-weight: 600;
+  transition: all 0.2s ease;
+  word-break: break-all; /* Ensures massive links don't break out of the bubble */
+}
+
+.chatLink:hover {
+  text-decoration-color: #ffffff; /* Brightens on hover */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* Subtle glow */
+}
+
+/* --- PREMIUM CODE FORMATTING --- */
+
+/* 1. Inline code (unchanged) */
+.inlineCode {
+  background: rgba(0, 0, 0, 0.4);
+  color: #e2e8f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 2. The New Code Block Wrapper */
+.codeBlockWrapper {
+  margin: 8px 0;
+  border-radius: 8px;
+  overflow: hidden; /* Keeps the header and the pre block perfectly contained */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #1e1e1e; /* Classic VS Code dark background */
+}
+
+/* 3. The Top Header Bar */
+.codeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 6px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.codeLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
+}
+
+/* 4. The Copy Button */
+.copyCodeButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.copyCodeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.textGreen {
+  color: #22c55e; /* Green checkmark on success */
+}
+
+/* --- INPUT ACTIONS (Paperclip & Emoji) --- */
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.emojiWrapper {
+  position: relative; /* Acts as the anchor for the floating picker */
+}
+
+/* THE FLOATING EMOJI KEYBOARD */
+.emojiPickerFloating {
+  position: absolute;
+  bottom: 100%; /* Pushes it above the button */
+  left: 0;
+  margin-bottom: 20px; /* Space between picker and button */
+  z-index: 50;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* --- HIDE THE EMOJI PICKER SCROLLBAR --- */
+/* We use :global() to reach inside the third-party component and hide its specific scrollbar */
+
+.emojiPickerFloating :global(.epr-body)::-webkit-scrollbar {
+  display: none;
+}
+
+.emojiPickerFloating :global(.epr-body) {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Make sure the Emoji Picker fits on mobile screens */
+@media (max-width: 600px) {
+  .emojiPickerFloating {
+    left: -40px; /* Shifts it left so it doesn't overflow the screen edge */
+  }
+}
+/* #endregion INPUT */
+
+/* #region FILE PROGRESS TOAST */
+/* THE FLOATING WRAPPER */
+.progressOverlay {
+  position: fixed;
+  top: 80px; /* Sits just below your sticky header */
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 100; /* Keeps it above the chat messages */
+  pointer-events: none; /* Clicks will pass right through it to the chat behind it */
+}
+
+/* THE GLASS TOAST CARD */
+.progressCard {
+  background: rgba(15, 17, 21, 0.85); /* Darker glass for contrast */
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px 20px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  
+  /* Smooth drop-down animation */
+  animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* TEXT AND ICON ALIGNMENT */
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.progressTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  overflow: hidden; /* Prevents long filenames from breaking it */
+}
+
+.progressIcon {
+  color: #3b82f6; /* Brand blue icon */
+  flex-shrink: 0;
+}
+
+.progressName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Adds ... to long filenames */
+}
+
+.progressPercent {
+  font-weight: 600;
+  font-size: 14px;
+  color: #3b82f6;
+}
+
+/* THE BAR ITSELF */
+.progressBarTrack {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa); /* Shiny blue gradient */
+  border-radius: 10px;
+  /* The transition makes it slide smoothly instead of ticking frame by frame */
+  transition: width 0.3s ease-out; 
+}
+
+/* THE SLIDE DOWN ANIMATION */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+/* #endregion FILE PROGRESS TOAST */
+
+/* #region USERNAME MODAL */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6); /* Darkens the webpage behind the modal */
+  backdrop-filter: blur(8px);     /* Blurs the webpage behind the modal */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensures it sits on top of everything else */
+}
+
+/* THE GLASS MODAL BOX */
+.modal {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 35px 40px;
+  width: 400px;
+  max-width: 90%; /* Keeps it responsive on mobile phones */
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+/* Add this near your other modal styles */
+.modalSubtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6); /* Soft gray text */
+  margin-top: -15px;               /* Pulls it closer to the h2 heading */
+  margin-bottom: 10px;             /* Gives the input field some breathing room */
+  line-height: 1.4;
+}
+
+/* THE NORMAL TEXT INPUT */
+.modalInput {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3); /* Dark inset look */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box; /* Ensures padding doesn't widen the input */
+}
+
+.modalInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* BUTTON CONTAINER AND LAYOUT */
+.modalButtons {
+  display: flex;
+  justify-content: flex-end; /* Pushes buttons to the right */
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* SECONDARY CANCEL BUTTON */
+.modalCancelButton {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modalCancelButton:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* PRIMARY SAVE BUTTON */
+.modalSaveButton {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modalSaveButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.modal {
+  animation: popup 0.2s ease;
+}
+
+.onboardingAudio {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08); /* Subtle separator line */
+}
+
+@keyframes popup {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* #endregion USERNAME MODAL */
+
+/* #region DRAG AND DROP UI */
+.dragOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 17, 21, 0.85); /* Matches your dark background */
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Sits on top of EVERYTHING */
+}
+
+.dragBox {
+  border: 3px dashed #3b82f6; /* Brand blue dashed border */
+  border-radius: 24px;
+  width: 80%;
+  max-width: 600px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  background: rgba(59, 130, 246, 0.05);
+  /* CRITICAL: Prevents the text/icon inside from accidentally triggering dragLeave events */
+  pointer-events: none; 
+  animation: popIn 0.2s ease-out forwards;
+}
+
+.dragIcon {
+  color: #3b82f6;
+  animation: bounce 2s infinite ease-in-out;
+}
+
+.dragBox h2 {
+  color: #ffffff;
+  font-size: 28px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.dragBox p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  margin: 0;
+}
+/* #endregion DRAG AND DROP UI */
+
+/* #region HEADER ICON & ROOM SETTINGS MODAL */
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.headerIconButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.headerIconButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* WIDE MODAL FOR TABS */
+.settingsModalWide {
+  width: 650px !important; /* Overrides the standard shareModal width */
+  max-width: 95%;
+  padding: 0 !important;   /* Removes padding for edge-to-edge sidebar */
+  overflow: hidden;
+}
+
+.settingsLayout {
+  display: flex;
+  min-height: 400px;
+}
+
+.settingsSidebar {
+  width: 35%;
+  background: rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebarTitle {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 10px;
+  padding-left: 10px;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.tabButton:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.activeTab {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #3b82f6 !important;
+}
+
+.settingsContent {
+  width: 65%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabSection {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.modalSubtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+/* AUDIO CHECKBOXES */
+.audioOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.subOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: opacity 0.2s ease;
+}
+
+.dividerHorizontal {
+  height: 1px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 5px 0;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.checkbox {
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #3b82f6;
+}
+
+.checkboxText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checkboxText strong {
+  font-size: 15px;
+  color: white;
+}
+
+.checkboxText span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* LOCKED INPUT STATE */
+.inputLocked {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.readOnlyText {
+  font-size: 12px;
+  color: #ef4444; /* Subtle red warning text */
+  margin-top: 10px;
+}
+/* #endregion HEADER ICON & ROOM SETTINGS MODAL */
+
+/* --- ONBOARDING DISCLAIMER --- */
+.termsDisclaimer {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4); /* Very dim grey/white */
+  text-align: center;
+  margin-top: 15px;
+  line-height: 1.4;
+}
