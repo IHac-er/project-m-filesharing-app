@@ -4,7 +4,9 @@ import styles from "./page.module.css";
 import { Zap, MessageSquare, FileText, Layout, Shield } from "lucide-react";
 import { useEffect} from "react";
 
+import Header from "./_components/Header";
 import RoomController from "./_components/RoomController";
+import Footer from "./_components/Footer"
 
 export default function Home() {
   useEffect(() => {
@@ -17,8 +19,10 @@ export default function Home() {
   }, []);
 
   return(
+    <>
+    <Header />
     <main className={styles.page}>
-
+      
       <RoomController />
       
       <section id="about-section" className={styles.about}>
@@ -66,5 +70,7 @@ export default function Home() {
       </section>    
 
     </main>
+    <Footer />
+    </>
   );
 }
