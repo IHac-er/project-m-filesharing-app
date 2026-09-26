@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 
 import styles from "./room.module.css"
-import { Copy, FileText, Download, Paperclip, Send, Upload, CheckCircle, LogOut, Share2, X, Smile, Settings, Volume2, User } from "lucide-react";
+import { Copy, FileText, Download, Paperclip, Send, Upload, CheckCircle, X, Smile, Volume2, User } from "lucide-react";
 import QRCode from "react-qr-code";
 import EmojiPicker from "emoji-picker-react";
 import CryptoJS from "crypto-js";
@@ -13,6 +13,7 @@ import { useFileTransfer } from "@/hooks/useFileTransfer";
 import { useWebRTC } from "@/hooks/useWebRTC";
 import { useSocket } from "@/hooks/useSocket";
 import { CodeBlock } from "./_components/CodeBlock";
+import Header from "./_components/Header";
 
 
 export default function RoomPage() {
@@ -143,18 +144,7 @@ export default function RoomPage() {
         setToastMessage(message);
         setTimeout(() => setToastMessage(""), 3000);
     }
-
-    /**
-     * Copies the 4-digit room code to the user's system clipboard.
-     */
-    async function copyRoomCode() {
-        try {
-            await navigator.clipboard.writeText(code);
-            showToast("Room code copied!");
-        } catch (err) {
-            showToast("Failed to copy code.");
-        }
-    }
+    
 
     /**
      * Copies the room's link to the user's system clipboard.
@@ -587,49 +577,13 @@ export default function RoomPage() {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
         >
-
-            {/* --- HEADER --- */}
-            <header className={styles.header}>
-
-                {/* LEFT SIDE: Brand & Share Button */}
-                <div className={styles.headerLeft}>
-                    <div className={styles.brand}>Project-M</div>
-                    
-                    <div 
-                        className={styles.codePill} 
-                        onClick={copyRoomCode}
-                        title="Copy Room Code"
-                    >
-                        <span>Code: <strong>{code}</strong></span>
-                        <Copy size={14} className={styles.copyIcon} />
-                    </div>
-
-                    <button
-                        className={styles.shareIconButton}
-                        onClick={() => setShowShareModal(true)}
-                        title="Share Room Link"
-                    >
-                        <Share2 size={18} />
-                    </button>
-                </div>
-
-                {/* RIGHT SIDE: Settings & Leave Button */}
-                <div className={styles.headerRight}>
-                    <button 
-                        className={styles.headerIconButton} 
-                        onClick={() => setShowSettings(true)}
-                        title="Room Settings"
-                    >
-                        <Settings size={18} />
-                    </button>
-
-                    <button className={styles.leaveButton} onClick={leaveRoom}>
-                        <LogOut size={16} />
-                        <span>Leave Room</span>
-                    </button>
-                </div>
-            </header>
-
+            <Header
+                code={code}
+                showToast={showToast}
+                setShowShareModal={setShowShareModal}
+                setShowSettings={setShowSettings}
+                leaveRoom={leaveRoom}
+            />            
             {/* --- DIRECT LINK USERNAME MODAL --- */}
             {showNameModal && (
                 <div className={styles.overlay}>
