@@ -19,6 +19,7 @@ import SettingsModal from "./_components/SettingsModal";
 import Toast from "./_components/Toast";
 import TransferProgress from "./_components/TransferProgress";
 import DragOverlay from "./_components/DragOverlay";
+import NameModal from "./_components/NameModal";
 
 export default function RoomPage() {
 
@@ -587,71 +588,20 @@ export default function RoomPage() {
                 setShowSettings={setShowSettings}
                 leaveRoom={leaveRoom}
             />            
-            {/* --- DIRECT LINK USERNAME MODAL --- */}
+            
             {showNameModal && (
-                <div className={styles.overlay}>
-                    <div className={styles.modal}>
-                        
-                        <h2>Join Room {code}</h2>
-                        <p className={styles.modalSubtitle}>
-                            Please enter a username to join this session.
-                        </p>
-
-                        <input
-                            value={tempUsername}
-                            onChange={(e) => setTempUsername(e.target.value)}
-                            className={styles.modalInput}
-                            placeholder="Enter a Username"
-                            autoFocus
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' && tempUsername.trim() !== "") {
-                                    localStorage.setItem("username", tempUsername.trim());
-                                    setUsername(tempUsername.trim());
-                                    setShowNameModal(false);
-                                }
-                            }}
-                        />
-
-                        {/* --- NEW: FIRST-TIME AUDIO PREFERENCE --- */}
-                        <div className={styles.onboardingAudio}>
-                            <label className={styles.checkboxRow}>
-                                <input 
-                                    type="checkbox" 
-                                    checked={audioSettings.master} 
-                                    onChange={() => toggleAudio("master")}
-                                    className={styles.checkbox}
-                                />
-                                <div className={styles.checkboxText}>
-                                    <strong>Enable Audio</strong>
-                                    <span>Play subtle sounds for messages and alerts.</span>
-                                </div>
-                            </label>
-                        </div>
-                        {/* --------------------------------------- */}
-
-                        {/* --- NEW: TERMS DISCLAIMER --- */}
-                        <p className={styles.termsDisclaimer}>
-                          By using our service, you agree to our <a>Terms & Conditions</a>.
-                        </p>
-
-                        <div className={styles.modalButtons}>
-                            <button
-                                className={styles.modalSaveButton}
-                                disabled={tempUsername.trim() === ""}
-                                style={{ opacity: tempUsername.trim() === "" ? 0.5 : 1 }}
-                                onClick={() => {
-                                    if (tempUsername.trim() !== "") {
-                                        localStorage.setItem("username", tempUsername.trim());
-                                        setUsername(tempUsername.trim());
-                                        setShowNameModal(false);
-                                    } 
-                                }}
-                            >
-                                Join Chat
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <NameModal
+                    code={code}
+                    tempUsername={tempUsername}
+                    setTempUsername={setTempUsername}
+                    audioSettings={audioSettings}
+                    toggleAudio={toggleAudio}
+                    onJoin={(name) => {
+                        localStorage.setItem("username", name);
+                        setUsername(name);
+                        setShowNameModal(false);
+                    }}
+                />
             )}
 
             {/* --- MAIN CHAT AREA --- */}
