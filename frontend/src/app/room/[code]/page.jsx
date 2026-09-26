@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 
 import styles from "./room.module.css"
-import { FileText, Download, Paperclip, Send, Upload, Smile } from "lucide-react";
+import { FileText, Download, Paperclip, Send, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import CryptoJS from "crypto-js";
 
@@ -18,6 +18,7 @@ import Header from "./_components/Header";
 import SettingsModal from "./_components/SettingsModal";
 import Toast from "./_components/Toast";
 import TransferProgress from "./_components/TransferProgress";
+import DragOverlay from "./_components/DragOverlay";
 
 export default function RoomPage() {
 
@@ -828,16 +829,7 @@ export default function RoomPage() {
                 copyShareLink={copyShareLink}
             />
 
-            {/* --- DRAG & DROP OVERLAY --- */}
-            {isDragging && (
-                <div className={styles.dragOverlay}>
-                    <div className={styles.dragBox}>
-                        <Upload size={54} className={styles.dragIcon} />
-                        <h2>Drop file to send</h2>
-                        <p>Instantly transfer P2P</p>
-                    </div>
-                </div>
-            )}
+            <DragOverlay isDragging={isDragging} />
 
             <SettingsModal
                 show={showSettings}
