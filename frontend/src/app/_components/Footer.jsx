@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react";
 
 import styles from "../page.module.css"  
@@ -11,8 +13,7 @@ export default function Footer() {
         <>
         {showTerms && (
             <TermsModal 
-                onClose={() => setShowTerms(false)
-                }
+                onClose={() => setShowTerms(false)}
             />
         )}
 
