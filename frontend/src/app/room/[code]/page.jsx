@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 
 import styles from "./room.module.css"
-import { FileText, Download, Paperclip, Send, Upload, CheckCircle, X, Smile, Volume2, User } from "lucide-react";
+import { FileText, Download, Paperclip, Send, Upload, CheckCircle, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import CryptoJS from "crypto-js";
 
@@ -15,7 +15,7 @@ import { CodeBlock } from "./_components/CodeBlock";
 
 import ShareModal from "./_components/ShareModal";
 import Header from "./_components/Header";
-
+import SettingsModal from "./_components/SettingsModal";
 
 export default function RoomPage() {
 
@@ -60,7 +60,6 @@ export default function RoomPage() {
 
     // -- Settings Modal & Audio 
     const [showSettings, setShowSettings] = useState(false);
-    const [activeTab, setActiveTab] = useState("audio");
     const [audioSettings, setAudioSettings] = useState({
         master: true,
         alerts: true,
@@ -881,121 +880,13 @@ export default function RoomPage() {
                 </div>
             )}
 
-            {/* --- ROOM SETTINGS MODAL --- */}
-            {showSettings && (
-                <div className={styles.overlay} onClick={() => setShowSettings(false)}>
-                    <div className={`${styles.shareModal} ${styles.settingsModalWide}`} onClick={(e) => e.stopPropagation()}>
-                        
-                        <div className={styles.settingsLayout}>
-                            {/* LEFT SIDEBAR */}
-                            <div className={styles.settingsSidebar}>
-                                <h3 className={styles.sidebarTitle}>Settings</h3>
-                                
-                                <button 
-                                    className={`${styles.tabButton} ${activeTab === "audio" ? styles.activeTab : ""}`}
-                                    onClick={() => setActiveTab("audio")}
-                                >
-                                    <Volume2 size={16} /> Audio & Alerts
-                                </button>
-                                
-                                <button 
-                                    className={`${styles.tabButton} ${activeTab === "username" ? styles.activeTab : ""}`}
-                                    onClick={() => setActiveTab("username")}
-                                >
-                                    <User size={16} /> Profile
-                                </button>
-                            </div>
-
-                            {/* RIGHT CONTENT AREA */}
-                            <div className={styles.settingsContent}>
-                                
-                                {activeTab === "audio" && (
-                                    <div className={styles.tabSection}>
-                                        <div className={styles.shareHeader}>
-                                            <h2>Audio Preferences</h2>
-                                            <button className={styles.closeModalButton} onClick={() => setShowSettings(false)}>
-                                                <X size={20} />
-                                            </button>
-                                        </div>
-                                        <p className={styles.modalSubtitle}>Manage the sound notifications for this room.</p>
-
-                                        <div className={styles.audioOptions}>
-                                            <label className={styles.checkboxRow}>
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={audioSettings.master} 
-                                                    onChange={() => toggleAudio("master")}
-                                                    className={styles.checkbox}
-                                                />
-                                                <div className={styles.checkboxText}>
-                                                    <strong>Master Audio</strong>
-                                                    <span>Enable or disable all sounds across the site.</span>
-                                                </div>
-                                            </label>
-
-                                            <div className={styles.dividerHorizontal}></div>
-
-                                            <div className={styles.subOptions} style={{ opacity: audioSettings.master ? 1 : 0.4, pointerEvents: audioSettings.master ? "auto" : "none" }}>
-                                                <label className={styles.checkboxRow}>
-                                                    <input 
-                                                        type="checkbox" 
-                                                        checked={audioSettings.alerts} 
-                                                        onChange={() => toggleAudio("alerts")}
-                                                        className={styles.checkbox}
-                                                    />
-                                                    <div className={styles.checkboxText}>
-                                                        <strong>Join & Leave Alerts</strong>
-                                                        <span>Play a tone when someone enters or leaves the room.</span>
-                                                    </div>
-                                                </label>
-
-                                                <label className={styles.checkboxRow}>
-                                                    <input 
-                                                        type="checkbox" 
-                                                        checked={audioSettings.messages} 
-                                                        onChange={() => toggleAudio("messages")}
-                                                        className={styles.checkbox}
-                                                    />
-                                                    <div className={styles.checkboxText}>
-                                                        <strong>Incoming Messages</strong>
-                                                        <span>Play a subtle "ding" when you receive a new text.</span>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {activeTab === "username" && (
-                                    <div className={styles.tabSection}>
-                                        <div className={styles.shareHeader}>
-                                            <h2>Profile</h2>
-                                            <button className={styles.closeModalButton} onClick={() => setShowSettings(false)}>
-                                                <X size={20} />
-                                            </button>
-                                        </div>
-                                        <p className={styles.modalSubtitle}>Your current identity in this room.</p>
-                                        
-                                        {/* LOCKED INPUT */}
-                                        <input
-                                            value={username}
-                                            readOnly
-                                            disabled
-                                            className={`${styles.modalInput} ${styles.inputLocked}`}
-                                        />
-                                        <p className={styles.readOnlyText}>
-                                            Username cannot be changed while in an active room.
-                                        </p>
-                                        
-                                    </div>
-                                )}
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            )}
+            <SettingsModal
+                show={showSettings}
+                onClose={() => setShowSettings(false)}
+                username={username}
+                audioSettings={audioSettings}
+                toggleAudio={toggleAudio} 
+            />
         </main>
     );
 }
