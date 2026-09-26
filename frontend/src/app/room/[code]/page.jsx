@@ -21,6 +21,7 @@ import TransferProgress from "./_components/TransferProgress";
 import DragOverlay from "./_components/DragOverlay";
 import NameModal from "./_components/NameModal";
 import MessageList from "./_components/MessageList";
+import ChatInput from "./_components/ChatInput";
 
 export default function RoomPage() {
 
@@ -605,9 +606,7 @@ export default function RoomPage() {
                 />
             )}
 
-            {/* --- MAIN CHAT AREA --- */}
             <div className={styles.chatContainer}>
-
                 <MessageList
                     ref={messageEndRef}
                     messages={messages}
@@ -616,98 +615,20 @@ export default function RoomPage() {
                     formatMessageText={formatMessageText}
                 />
 
-                {/* --- CHAT INPUT AREA --- */}
-                <div className={styles.inputArea}>
-                    <div className={styles.unifiedInput}>
-
-                        {/* Bouncing Dots Typing Indicator */}
-                        {isTyping && (
-                            <div className={styles.typingIndicatorWrapper}>
-                                <div className={styles.typingIndicator}>
-                                    <span></span><span></span><span></span>
-                                </div>
-                            </div>
-                        )}
-                        
-                        {/* 1. INPUT ACTIONS (File & Emoji) */}
-                        <div className={styles.actionButtons}>
-                            
-                            {/* File Upload */}
-                            <div className={styles.fileWrapper}>
-                                <input 
-                                    type="file" 
-                                    id="file-upload" 
-                                    onChange={safeHandleFileSelect}
-                                    disabled={userCount < 2}
-                                    className={styles.hiddenFileInput}
-                                />
-                                <label 
-                                    htmlFor="file-upload" 
-                                    className={`${styles.iconButton} ${userCount < 2 ? styles.disabled : ''}`}
-                                    title="Attach a file"
-                                >
-                                    <Paperclip size={22} />
-                                </label>
-                            </div>
-
-                            {/* Emoji Toggle */}
-                            <div className={styles.emojiWrapper} ref={emojiPickerRef}>
-                                <button 
-                                    className={`${styles.iconButton} ${userCount < 2 ? styles.disabled : ''}`}
-                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                                    disabled={userCount < 2}
-                                    title="Add an emoji"
-                                >
-                                    <Smile size={22} />
-                                </button>
-
-                                {/* The Floating Picker */}
-                                {showEmojiPicker && (
-                                    <div className={styles.emojiPickerFloating}>
-                                        <EmojiPicker 
-                                            theme="dark" 
-                                            previewConfig={{ showPreview: false }}
-                                            onEmojiClick={(emojiObj) => {
-                                                setMessageInput(prev => prev + emojiObj.emoji);
-                                            }}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* 2. THE TEXT INPUT */}
-                        <textarea
-                            ref={textAreaRef}
-                            type="text"
-                            value={messageInput}
-                            onChange={handleTyping}
-                            onPaste={handlePaste}
-                            placeholder={userCount < 2 ? "Waiting for someone to join..." : "Type your message..."}
-                            disabled={userCount < 2}
-                            className={styles.chatInput}
-                            rows={1}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' && !e.shiftKey) {
-                                    e.preventDefault();
-                                    sendMessage();
-                                }
-                            }}
-                        />
-
-                        {/* 3. THE SEND BUTTON */}
-                        <button 
-                            onClick={sendMessage} 
-                            disabled={userCount < 2 || !messageInput.trim()} 
-                            className={styles.sendButton}
-                            title="Send message"
-                        >
-                            <Send size={20} />
-                        </button>
-
-                    </div>
-                </div>
-
+                <ChatInput
+                    isTyping={isTyping}
+                    userCount={userCount}
+                    safeHandleFileSelect={safeHandleFileSelect}
+                    emojiPickerRef={emojiPickerRef}
+                    showEmojiPicker={showEmojiPicker}
+                    setShowEmojiPicker={setShowEmojiPicker}
+                    setMessageInput={setMessageInput}
+                    textAreaRef={textAreaRef}
+                    messageInput={messageInput}
+                    handleTyping={handleTyping}
+                    handlePaste={handlePaste}
+                    sendMessage={sendMessage}
+                />
             </div>
 
             <TransferProgress transferProgress={transferProgress} />
