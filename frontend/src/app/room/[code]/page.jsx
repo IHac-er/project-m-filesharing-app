@@ -17,6 +17,7 @@ import ShareModal from "./_components/ShareModal";
 import Header from "./_components/Header";
 import SettingsModal from "./_components/SettingsModal";
 import Toast from "./_components/Toast";
+import TransferProgress from "./_components/TransferProgress";
 
 export default function RoomPage() {
 
@@ -816,42 +817,7 @@ export default function RoomPage() {
 
             </div>
 
-            {/* THE FLOATING PROGRESS OVERLAY */}
-            {transferProgress && (
-                <div className={styles.progressOverlay}>
-                    <div className={styles.progressCard}>
-                        
-                        <div className={styles.progressHeader}>
-                            <div className={styles.progressTitle}>
-                                {/* Dynamically show Upload or Download icon */}
-                                {transferProgress.type === "sending" ? (
-                                    <Upload size={18} className={styles.progressIcon} />
-                                ) : (
-                                    <Download size={18} className={styles.progressIcon} />
-                                )}
-                                
-                                <span className={styles.progressName} title={transferProgress.name}>
-                                    {transferProgress.type === "sending" ? "Sending: " : "Receiving: "} 
-                                    <strong>{transferProgress.name}</strong>
-                                </span>
-                            </div>
-                            
-                            <span className={styles.progressPercent}>
-                                {transferProgress.progress}%
-                            </span>
-                        </div>
-
-                        {/* THE VISUAL PROGRESS BAR */}
-                        <div className={styles.progressBarTrack}>
-                            <div 
-                                className={styles.progressBarFill} 
-                                style={{ width: `${transferProgress.progress}%` }}
-                            ></div>
-                        </div>
-                        
-                    </div>
-                </div>
-            )}
+            <TransferProgress transferProgress={transferProgress} />
 
             <Toast message={toastMessage} />
 
