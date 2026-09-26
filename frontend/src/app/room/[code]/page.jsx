@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 
 import styles from "./room.module.css"
-import { FileText, Download, Paperclip, Send, Upload, CheckCircle, Smile } from "lucide-react";
+import { FileText, Download, Paperclip, Send, Upload, Smile } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import CryptoJS from "crypto-js";
 
@@ -16,6 +16,7 @@ import { CodeBlock } from "./_components/CodeBlock";
 import ShareModal from "./_components/ShareModal";
 import Header from "./_components/Header";
 import SettingsModal from "./_components/SettingsModal";
+import Toast from "./_components/Toast";
 
 export default function RoomPage() {
 
@@ -852,15 +853,7 @@ export default function RoomPage() {
                 </div>
             )}
 
-            {/* --- GLOBAL TOAST NOTIFICATION --- */}
-            {toastMessage && (
-                <div className={styles.toastOverlay}>
-                    <div className={styles.toastCard}>
-                        <CheckCircle size={18} className={styles.toastIconSuccess} />
-                        <span>{toastMessage}</span>
-                    </div>
-                </div>
-            )}
+            <Toast message={toastMessage} />
 
             <ShareModal 
                 show={showShareModal}
