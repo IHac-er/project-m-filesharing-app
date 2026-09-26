@@ -17,7 +17,6 @@ export function useSocket(
     isCreate,
     username,
     setMessages,
-    setMyId,
     setUserCount,
     startWebRTC,
     createPeerConnection,
@@ -122,7 +121,6 @@ export function useSocket(
         });
 
         socketRef.current.on("connect", () => {
-            setMyId(socketRef.current.id);
             // Once physically connected, formally request to join the specific room code
             socketRef.current.emit("join-room", { 
                 roomCode: code, 

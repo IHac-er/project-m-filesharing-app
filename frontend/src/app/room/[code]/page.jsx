@@ -4,8 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 
 import styles from "./room.module.css"
-import { FileText, Download, Paperclip, Send, Smile } from "lucide-react";
-import EmojiPicker from "emoji-picker-react";
 import CryptoJS from "crypto-js";
 
 import { useFileTransfer } from "@/hooks/useFileTransfer";
@@ -44,7 +42,6 @@ export default function RoomPage() {
     // ==========================================================================================================================================
 
     // -- User & Room State --
-    const [myId, setMyId] = useState(null); 
     const [authorId, setAuthorId] = useState(null);
     const [userCount, setUserCount] = useState(1);
 
@@ -219,16 +216,6 @@ export default function RoomPage() {
 
         setMessageInput("");
 
-    }
-
-    /**
-     * Fallback keyboard handler for Enter key. 
-     * (Note: Textarea uses an inline onKeyDown for Shift+Enter support).
-     */
-    function handleKeyDown(e) {
-        if (e.key === "Enter") {
-            sendMessage();
-        }
     }
 
     /**
@@ -412,7 +399,6 @@ export default function RoomPage() {
         isCreate,
         username,
         setMessages,
-        setMyId,
         setUserCount,
         startWebRTC,
         createPeerConnection,
@@ -569,11 +555,6 @@ export default function RoomPage() {
     useEffect(() => {
         audioSettingsRef.current = audioSettings;
     }, [audioSettings]);
-
-
-    // ==========================================================================================================================================
-    // 8. RENDER UI (JSX)
-    // ==========================================================================================================================================
 
     return (
         <main 
