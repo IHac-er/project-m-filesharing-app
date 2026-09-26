@@ -1,82 +1,19 @@
 "use client";
 
-/**
- * Project-M Room Page
- * * The core chat interface. Manages the WebRTC peer-to-peer connection, 
- * Socket.io signaling, file transfers, and real-time chat UI.
- */
-
-// ==========================================================================================================================================
-// 1. IMPORTS
-// ==========================================================================================================================================
-
-// -- React & Next.js --
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 
-// -- UI & Assets --
 import styles from "./room.module.css"
 import { Copy, FileText, Download, Paperclip, Send, Upload, CheckCircle, LogOut, Share2, X, Smile, Settings, Volume2, User } from "lucide-react";
 import QRCode from "react-qr-code";
 import EmojiPicker from "emoji-picker-react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import CryptoJS from "crypto-js";
 
-// -- Custom Hooks (Business Logic) --
 import { useFileTransfer } from "@/hooks/useFileTransfer";
 import { useWebRTC } from "@/hooks/useWebRTC";
 import { useSocket } from "@/hooks/useSocket";
+import { CodeBlock } from "./_components/CodeBlock";
 
-
-// A dedicated component for rendering multi-line code with Syntax Highlighting
-const CodeBlock = ({ codeText }) => {
-    const [copied, setCopied] = useState(false);
-
-    // 1. Clean the code and detect the language
-    let language = "javascript"; // Default to JS if they don't specify one
-    let cleanCode = codeText.trim();
-
-    // Check if the first line is just a language name (e.g., 'python', 'html')
-    const lines = cleanCode.split('\n');
-    if (lines.length > 1 && !lines[0].includes(' ') && lines[0].length < 15) {
-        language = lines[0].trim().toLowerCase();
-        cleanCode = lines.slice(1).join('\n').trim(); // Remove the language line
-    }
-
-    // 2. Handle the Copy action
-    const handleCopy = () => {
-        navigator.clipboard.writeText(cleanCode); // Copy the clean code without the language tag
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    return (
-        <div className={styles.codeBlockWrapper}>
-            <div className={styles.codeHeader}>
-                <span className={styles.codeLabel}>{language} snippet</span>
-                <button onClick={handleCopy} className={styles.copyCodeButton}>
-                    {copied ? <CheckCircle size={14} className={styles.textGreen} /> : <Copy size={14} />}
-                    {copied ? "Copied!" : "Copy"}
-                </button>
-            </div>
-            
-            {/* THE NEW SYNTAX HIGHLIGHTER */}
-            <SyntaxHighlighter 
-                language={language} 
-                style={vscDarkPlus}
-                customStyle={{
-                    margin: 0,
-                    padding: '16px',
-                    background: 'transparent', // Let our wrapper handle the background color
-                    fontSize: '13px'
-                }}
-            >
-                {cleanCode}
-            </SyntaxHighlighter>
-        </div>
-    );
-};
 
 export default function RoomPage() {
 
