@@ -17,7 +17,6 @@ export default function Home() {
         <section id="about-section" className={styles.about}>
           <div className={styles.aboutContainer}>
 
-            {/* Left Column: The Description */}
             <div className={styles.aboutContent}>
               <h2>About Project-M</h2>
               <p>
@@ -28,7 +27,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Right Column: The Feature List */}
             <div className={styles.aboutFeatures}>
               <h3>What We Provide</h3>
               <ul>
