@@ -4,8 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 
 import styles from "./room.module.css"
-import { Copy, FileText, Download, Paperclip, Send, Upload, CheckCircle, X, Smile, Volume2, User } from "lucide-react";
-import QRCode from "react-qr-code";
+import { FileText, Download, Paperclip, Send, Upload, CheckCircle, X, Smile, Volume2, User } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import CryptoJS from "crypto-js";
 
@@ -13,6 +12,8 @@ import { useFileTransfer } from "@/hooks/useFileTransfer";
 import { useWebRTC } from "@/hooks/useWebRTC";
 import { useSocket } from "@/hooks/useSocket";
 import { CodeBlock } from "./_components/CodeBlock";
+
+import ShareModal from "./_components/ShareModal";
 import Header from "./_components/Header";
 
 
@@ -862,38 +863,12 @@ export default function RoomPage() {
                 </div>
             )}
 
-            {/* --- SHARE MODEL --- */}
-            {showShareModal && (
-                <div className={styles.overlay} onClick={() => setShowShareModal(false)}>
-                    <div className={styles.shareModal} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.shareHeader}>
-                            <h2>Share Room Link</h2>
-                            <button className={styles.closeModalButton} onClick={() => setShowShareModal(false)}>
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        <div className={styles.qrContainer}>
-                            <div className={styles.qrWrapper}>
-                                <QRCode value={shareUrl} size={180} fgColor="#ffffff" bgColor="transparent" />
-                            </div>
-                            <p>Scan to join instantly</p>
-                        </div>
-
-                        <div className={styles.shareLinkContainer}>
-                            <input 
-                                type="text" 
-                                readOnly 
-                                value={shareUrl} 
-                                className={styles.shareInput} 
-                            />
-                            <button className={styles.shareCopyBtn} onClick={copyShareLink} title="Copy Link">
-                                <Copy size={18} />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ShareModal 
+                show={showShareModal}
+                onClose={() => setShowShareModal(false)}
+                shareUrl={shareUrl}
+                copyShareLink={copyShareLink}
+            />
 
             {/* --- DRAG & DROP OVERLAY --- */}
             {isDragging && (
