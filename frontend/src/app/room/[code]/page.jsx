@@ -20,6 +20,7 @@ import Toast from "./_components/Toast";
 import TransferProgress from "./_components/TransferProgress";
 import DragOverlay from "./_components/DragOverlay";
 import NameModal from "./_components/NameModal";
+import MessageList from "./_components/MessageList";
 
 export default function RoomPage() {
 
@@ -607,72 +608,13 @@ export default function RoomPage() {
             {/* --- MAIN CHAT AREA --- */}
             <div className={styles.chatContainer}>
 
-                {/* SCROLLING MESSAGES LIST */}
-                <div className={styles.messages}>
-                {messages.map((msg, index) => {
-
-                    // 1. Render System Alerts (e.g., "User Joined")
-                    if (msg.type === "system") {
-                        return (
-                            <div key={index} className={styles.systemMessage}>
-                                {msg.text}
-                            </div>
-                        );
-                    }
-
-                    // 2. Render File Attachments
-                    if (msg.type == "file") {
-                        const isMine = msg.sender === authorId;
-
-                        return (
-                            <div 
-                                key={index} 
-                                className={`${isMine ? styles.myMessage : styles.otherMessage} ${styles.fileCard}`}
-                            >
-                                <div className={styles.fileInfo}>
-                                    <div className={styles.fileIconWrapper}>
-                                        <FileText size={24} />
-                                    </div>
-                                    <div className={styles.fileDetails}>
-                                        <span className={styles.fileName} title={msg.name}>
-                                            {msg.name}
-                                        </span>
-                                        <span className={styles.fileSize}>
-                                            {formatFileSize(msg.size)}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* The Download Button only appears once the Blob URL is fully processed */}
-                                {msg.url ? (
-                                    <a href={msg.url} download={msg.name} className={styles.downloadButton}>
-                                        <Download size={16} /> Download
-                                    </a>
-                                ) : (
-                                    <div className={styles.downloadingState}>
-                                        Processing...
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    }
-
-                    // 3. Render Standard Text Messages
-                    const isMine = msg.sender === authorId;
-                    return (
-                    <div
-                        key={index}
-                        className={isMine ? styles.myMessage : styles.otherMessage}
-                    >
-                        {formatMessageText(msg.text)}
-                    </div>
-                    );
-
-                })}
-
-                {/* Invisible div used as the anchor for the auto-scroll */}
-                <div ref={messageEndRef} />
-                </div>
+                <MessageList
+                    ref={messageEndRef}
+                    messages={messages}
+                    authorId={authorId}
+                    formatFileSize={formatFileSize}
+                    formatMessageText={formatMessageText}
+                />
 
                 {/* --- CHAT INPUT AREA --- */}
                 <div className={styles.inputArea}>
