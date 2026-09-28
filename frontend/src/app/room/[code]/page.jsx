@@ -12,6 +12,7 @@ import { useSocket } from "@/hooks/useSocket";
 import { useAudioSettings } from "@/hooks/useAudioSettings"; 
 import { useChatPersistence } from "@/hooks/useChatPersistence";
 import { useToast } from "@/hooks/useToast";
+import { useShareLink } from "@/hooks/useShareLink";
 
 import CodeBlock from "./_components/CodeBlock";
 import ShareModal from "./_components/ShareModal";
@@ -60,7 +61,7 @@ export default function RoomPage() {
 
     // -- Share States --
     const [showShareModal, setShowShareModal] = useState(false);
-    const [shareUrl, setShareUrl] = useState("");
+    const { shareUrl, copyShareLink } = useShareLink(code, showToast);
 
     const [showSettings, setShowSettings] = useState(false);
     const { audioSettings, audioSettingsRef, toggleAudio } = useAudioSettings();
@@ -129,19 +130,6 @@ export default function RoomPage() {
 
         // If the pipe is open and the file is safe, hand it off!
         handleFileSelect(e);
-    }
-    
-
-    /**
-     * Copies the room's link to the user's system clipboard.
-     */
-    async function copyShareLink() {
-        try {
-            await navigator.clipboard.writeText(shareUrl);
-            showToast("Share link copied!");
-        } catch (err) {
-            showToast("Failed to copy link.")
-        }
     }
 
     /**
@@ -421,16 +409,6 @@ export default function RoomPage() {
             textAreaRef.current.style.height = `${Math.min(scrollHeight, 120)}px`;
         }
     }, [messageInput])
-
-    /**
-     * To Generate full URL dynamically on the client-side to show on the
-     * share modal
-     */
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            setShareUrl(`${window.location.origin}/room/${code}`);
-        }
-    }, [code]);
 
     /**
      * Listen for clicks and ESC Key to close the Emoji Panel
