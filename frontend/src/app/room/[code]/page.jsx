@@ -94,34 +94,12 @@ export default function RoomPage() {
         setMessages(prev => [...prev, fileMessage]);
     }
 
-    /**
-     * Wipes the local session history, completely severs all network connections, 
-     * and routes the user back home.
-     */
     function leaveRoom() {
-        // 1. Clear session storage
         sessionStorage.removeItem(`chat_${code}`);
         sessionStorage.removeItem(`author_${code}`);
-
-        // 2. Sever WebRTC Data Channel
-        if (dataChannelRef.current) {
-            dataChannelRef.current.close();
-            dataChannelRef.current = null;
-        }
-
-        // 3. Sever WebRTC Peer Connection
-        if (peerRef && peerRef.current) {
-            peerRef.current.close();
-            peerRef.current = null;
-        }
-
-        // 4. Sever Socket Connection
-        if (socketRef.current) {
-            socketRef.current.disconnect();
-            socketRef.current = null;
-        }
-
-        // 5. Navigate away smoothly (SPA routing)
+        
+        closeConnection();
+        disconnect();
         router.push("/");
     }
 
@@ -164,14 +142,15 @@ export default function RoomPage() {
     const {
         peerRef,
         createPeerConnection,
-        startWebRTC
+        startWebRTC,
+        closeConnection
     } = useWebRTC(socketRef, code, dataChannelRef, handleIncomingData);
 
     const { messageInput, setMessageInput, handleTyping, sendMessage } =
         useChatComposer(socketRef, code, username, authorId, showToast);
 
     // Manages the Socket.io connection to the Node.js server for signaling/chat
-    useSocket(
+    const { disconnect } = useSocket(
         code,
         isCreate,
         username,

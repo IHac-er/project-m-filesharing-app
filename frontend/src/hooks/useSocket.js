@@ -1,13 +1,3 @@
-/**
- * Socket.io Signaling Hook
- * * Manages the WebSocket connection to the Node.js backend.
- * Handles room validation, real-time chat events, typing indicators,
- * audio notifications, and the WebRTC signaling process.
- */
-
-// ==========================================================================================================================================
-// 1. IMPORTS
-// ==========================================================================================================================================
 import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import CryptoJS from "crypto-js";
@@ -92,6 +82,13 @@ export function useSocket(
     // ==========================================================================================================================================
     // 4. MAIN SOCKET LIFECYCLE
     // ==========================================================================================================================================
+
+    function disconnect() {
+        if (socketRef.current) {
+            socketRef.current.disconnect();
+            socketRef.current = null;
+        }
+    }
 
     useEffect(() => {
         // If there is no username yet, abort the connection and wait!
@@ -271,4 +268,6 @@ export function useSocket(
         };
 
     }, [code, username]); // Re-run this massive effect ONLY if the room code changes
+
+    return { disconnect };
 }
