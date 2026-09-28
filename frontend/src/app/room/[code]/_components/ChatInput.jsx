@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import { Paperclip, Smile, Send } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import styles from "../room.module.css";
@@ -8,16 +9,44 @@ export default function ChatInput({
     isTyping,
     userCount,
     safeHandleFileSelect,
-    emojiPickerRef,
-    showEmojiPicker,
-    setShowEmojiPicker,
-    setMessageInput,
-    textAreaRef,
     messageInput,
+    setMessageInput,
     handleTyping,
     handlePaste,
     sendMessage
 }) {
+    
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const emojiPickerRef = useRef(null);
+    const textAreaRef = useRef(null);
+
+    useEffect(() => {
+        if (textAreaRef.current) {
+            textAreaRef.current.style.height = "auto";
+            const scrollHeight = textAreaRef.current.scrollHeight;
+            textAreaRef.current.style.height = `${Math.min(scrollHeight, 120)}px`;
+        }
+    }, [messageInput]);
+
+    useEffect(() => {
+        function handleInteraction(e) {
+            if (e.key === "Escape") {
+                setShowEmojiPicker(false);
+                return;
+            }
+            if (showEmojiPicker && emojiPickerRef.current && !emojiPickerRef.current.contains(e.target)) {
+                setShowEmojiPicker(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleInteraction);
+        document.addEventListener("keydown", handleInteraction);
+        return () => {
+            document.removeEventListener("mousedown", handleInteraction);
+            document.removeEventListener("keydown", handleInteraction);
+        };
+    }, [showEmojiPicker]);
+
     return (
         <div className={styles.inputArea}>
             <div className={styles.unifiedInput}>

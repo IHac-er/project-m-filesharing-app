@@ -52,7 +52,6 @@ export default function RoomPage() {
     const [messageInput, setMessageInput] = useState("");
     const { messages, setMessages, authorId } = useChatPersistence(code);
     const [isTyping, setIsTyping] = useState(false);
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const { isDragging, dragHandlers } = useDragAndDrop(
         userCount,
         (file) => safeHandleFileSelect({ target: { files: [file], value: "" } })
@@ -80,13 +79,9 @@ export default function RoomPage() {
 
     // -- DOM Refs --
     const messageEndRef = useRef(null);
-    const textAreaRef = useRef(null);
 
     // -- Timer Refs --
     const typingTimeoutRef = useRef(null);
-
-    // -- UI Refs -- 
-    const emojiPickerRef = useRef(null);
 
 
     // ==========================================================================================================================================
@@ -313,47 +308,6 @@ export default function RoomPage() {
         }
     }, [messages]);
 
-    /**
-     * Auto-Resize Textarea: Dynamically adjusts the height of the input box 
-     * as the user types, capping at 120px (approx. 5 lines).
-     */
-    useEffect(() => {
-        if (textAreaRef.current) {
-            textAreaRef.current.style.height = "auto";
-
-            const scrollHeight = textAreaRef.current.scrollHeight;
-            textAreaRef.current.style.height = `${Math.min(scrollHeight, 120)}px`;
-        }
-    }, [messageInput])
-
-    /**
-     * Listen for clicks and ESC Key to close the Emoji Panel
-     */
-    useEffect(() => {
-        function handleInteraction(e) {
-            // Close if the user presses the Escape key
-            if (e.key === "Escape") {
-                setShowEmojiPicker(false);
-                return;
-            }
-
-            // Close if the click happened OUTSIDE of our emoji wrapper
-            if (showEmojiPicker && emojiPickerRef.current && !emojiPickerRef.current.contains(e.target)) {
-                setShowEmojiPicker(false);
-            }
-        }
-
-        // Attach the event listeners to the entire document
-        document.addEventListener("mousedown", handleInteraction);
-        document.addEventListener("keydown", handleInteraction);
-
-        // Cleanup: Remove the listeners when the component unmounts or state changes
-        return () => {
-            document.removeEventListener("mousedown", handleInteraction);
-            document.removeEventListener("keydown", handleInteraction);
-        };
-    }, [showEmojiPicker]); // Only re-run this if the picker opens or closes
-
     return (
         <main className={styles.page} {...dragHandlers}>
 
@@ -391,12 +345,8 @@ export default function RoomPage() {
                     isTyping={isTyping}
                     userCount={userCount}
                     safeHandleFileSelect={safeHandleFileSelect}
-                    emojiPickerRef={emojiPickerRef}
-                    showEmojiPicker={showEmojiPicker}
-                    setShowEmojiPicker={setShowEmojiPicker}
-                    setMessageInput={setMessageInput}
-                    textAreaRef={textAreaRef}
                     messageInput={messageInput}
+                    setMessageInput={setMessageInput}
                     handleTyping={handleTyping}
                     handlePaste={handlePaste}
                     sendMessage={sendMessage}
