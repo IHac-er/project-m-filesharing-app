@@ -4,7 +4,6 @@ import { useState, useRef } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 
 import styles from "./room.module.css"
-import CryptoJS from "crypto-js";
 
 import { useFileTransfer } from "@/hooks/useFileTransfer";
 import { useWebRTC } from "@/hooks/useWebRTC";
@@ -15,6 +14,7 @@ import { useToast } from "@/hooks/useToast";
 import { useShareLink } from "@/hooks/useShareLink";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { useUsername } from "@/hooks/useUsername";
+import { useChatComposer } from "@/hooks/useChatComposer";
 
 import ShareModal from "./_components/ShareModal";
 import Header from "./_components/Header";
@@ -48,7 +48,6 @@ export default function RoomPage() {
     const [userCount, setUserCount] = useState(1);
 
     // -- Chat State --
-    const [messageInput, setMessageInput] = useState("");
     const { messages, setMessages, authorId } = useChatPersistence(code);
     const [isTyping, setIsTyping] = useState(false);
     const { isDragging, dragHandlers } = useDragAndDrop(
@@ -76,9 +75,6 @@ export default function RoomPage() {
     const socketRef = useRef(null);
     const dataChannelRef = useRef(null);
 
-    // -- Timer Refs --
-    const typingTimeoutRef = useRef(null);
-
 
     // ==========================================================================================================================================
     // 5. EVENT HANDLERS & HELPERS
@@ -96,63 +92,6 @@ export default function RoomPage() {
         }
 
         setMessages(prev => [...prev, fileMessage]);
-    }
-
-    /**
-     * Emits a typing status to the server and handles debouncing.
-     * Automatically emits "stop-typing" if the user pauses for 1.2 seconds.
-     */
-    function handleTyping(e) {
-        setMessageInput(e.target.value);
-
-        socketRef.current.emit("typing", {
-            room: code, 
-            username: username
-        });
-
-        if (typingTimeoutRef.current) {
-            clearTimeout(typingTimeoutRef.current);
-        }
-
-        typingTimeoutRef.current = setTimeout(() => {
-            socketRef.current.emit("stop-typing", code);
-        }, 1200);
-    }
-
-    /**
-     * Packages the current input text and sends it through the Socket connection.
-     */
-    function sendMessage() {
-
-        if (messageInput.trim() === "") return;
-
-        // DEFENSIVE GUARD: Is the socket actually connected?
-        if (!socketRef.current || !socketRef.current.connected) {
-            showToast("Disconnected from server. Reconnecting...");
-            return;
-        }
-
-        const encryptedText = CryptoJS.AES.encrypt(messageInput, code).toString();
-
-        const messageData = {
-            sender: authorId,
-            text: encryptedText,
-            timestamp: Date.now()
-        };
-
-        socketRef.current.emit("send-message", {
-            room: code,
-            message: messageData
-        });
-
-        socketRef.current.emit("stop-typing", code);
-
-        if (typingTimeoutRef.current) {
-            clearTimeout(typingTimeoutRef.current);
-        }
-
-        setMessageInput("");
-
     }
 
     /**
@@ -216,10 +155,6 @@ export default function RoomPage() {
         }
     }
 
-    // ==========================================================================================================================================
-    // 6. CUSTOM HOOK INVOCATIONS (BUSINESS LOGIC)
-    // ==========================================================================================================================================
-
     const {
         handleFileSelect,
         handleIncomingData
@@ -231,6 +166,9 @@ export default function RoomPage() {
         createPeerConnection,
         startWebRTC
     } = useWebRTC(socketRef, code, dataChannelRef, handleIncomingData);
+
+    const { messageInput, setMessageInput, handleTyping, sendMessage } =
+        useChatComposer(socketRef, code, username, authorId, showToast);
 
     // Manages the Socket.io connection to the Node.js server for signaling/chat
     useSocket(
