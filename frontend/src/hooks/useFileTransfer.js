@@ -1,42 +1,17 @@
-/**
- * WebRTC File Transfer Hook
- * * Manages the complex process of breaking files down into binary chunks,
- * sending them over a WebRTC DataChannel, handling network backpressure,
- * and reassembling incoming binary chunks back into downloadable Blobs.
- */
+import { useState, useRef } from "react";   
 
-// ==========================================================================================================================================
-// 1. IMPORTS
-// ==========================================================================================================================================
-import { useRef } from "react";
+export function useFileTransfer(dataChannelRef, onFileReceived, myId, showToast) {
 
-export function useFileTransfer(dataChannelRef, onFileReceived, setTransferProgress, myId) {
+    const [transferProgress, setTransferProgress] = useState(null);
 
-    // ==========================================================================================================================================
-    // 2. CONSTANTS & MUTABLE REFS
-    // ==========================================================================================================================================
-
-    // The maximum amount of data (1MB) allowed in the WebRTC send buffer. 
-    // If we exceed this, the browser will crash the connection.
     const MAX_BUFFER = 1 * 1024 * 1024;
+    const MAX_FILE_SIZE = 500 * 1024 * 1024;
 
-    // We use `useRef` instead of `useState` for incoming file data. 
-    // If we used useState, appending 10,000 file chunks would trigger 
-    // 10,000 React re-renders, instantly freezing the user's browser
-    const incomingFileRef = useRef(null);                // Stores metadata (name, size)
-    const receivedChunksRef = useRef([]);                // Array of raw binary ArrayBuffers
-    const receivedSizeRef = useRef(0);                   // Running total of bytes received
+    const incomingFileRef = useRef(null);               
+    const receivedChunksRef = useRef([]);               
+    const receivedSizeRef = useRef(0);          
 
-    // ==========================================================================================================================================
-    // 3. OUTGOING: FILE SENDING LOGIC
-    // ==========================================================================================================================================
-
-    /**
-     * Chunks a file and sends it over the WebRTC DataChannel.
-     * @param {File} file - The file object selected by the user.
-     */
     function sendFile(file) {
-        // Send the file in 64KB chunks (Optimal size for WebRTC stability)
         const chunksize = 64 * 1024; 
 
         if (!dataChannelRef.current ||
@@ -117,14 +92,6 @@ export function useFileTransfer(dataChannelRef, onFileReceived, setTransferProgr
         readSlice(0);
     }
 
-    // ==========================================================================================================================================
-    // 4. INCOMING: FILE RECEIVING LOGIC
-    // ==========================================================================================================================================
-
-    /**
-     * Listens to the DataChannel. Handles both JSON metadata and raw binary chunks.
-     * @param {MessageEvent} event - The payload coming from the WebRTC peer.
-     */
     function handleIncomingData(event) {
 
         // SCENARIO A: Receiving Metadata (String)
@@ -191,27 +158,28 @@ export function useFileTransfer(dataChannelRef, onFileReceived, setTransferProgr
         }
     }
 
-    // ==========================================================================================================================================
-    // 5. DOM EVENT WRAPPERS
-    // ==========================================================================================================================================
-
-    /**
-     * Intercepts the HTML <input type="file"> event, extracts the file, 
-     * and passes it to the WebRTC sending logic.
-     */
     function handleFileSelect(event) {
-        const file = event.target.files[0];
-        if (!file) return;  // User cancelled the file dialog
+        if (!dataChannelRef.current || dataChannelRef.current.readyState !== "open") {
+            showToast("Connection not ready. Please wait a moment.");
+            event.target.value = "";
+            return;
+        }
+
+        const file = event.target?.files?.[0];
+        if (!file) return
+
+        if (file.size > MAX_FILE_SIZE) {
+            showToast("File too large! Please keep files under 500MB.");
+            event.target.value = "";
+            return;
+        }
 
         sendFile(file);
     }
 
-    // ==========================================================================================================================================
-    // 6. EXPORTS
-    // ==========================================================================================================================================
-
     return {
         handleFileSelect,
-        handleIncomingData
+        handleIncomingData,
+        transferProgress
     };
 }

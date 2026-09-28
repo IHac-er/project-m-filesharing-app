@@ -1,23 +1,12 @@
-/**
- * Socket.io Signaling Hook
- * * Manages the WebSocket connection to the Node.js backend.
- * Handles room validation, real-time chat events, typing indicators,
- * audio notifications, and the WebRTC signaling process.
- */
-
-// ==========================================================================================================================================
-// 1. IMPORTS
-// ==========================================================================================================================================
 import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import CryptoJS from "crypto-js";
 
-export function useSocket(
+export function useSocket({
     code,
     isCreate,
     username,
     setMessages,
-    setMyId,
     setUserCount,
     startWebRTC,
     createPeerConnection,
@@ -26,7 +15,7 @@ export function useSocket(
     setIsTyping,
     router,
     audioSettingsRef
-) {
+}) {
 
     // ==========================================================================================================================================
     // 2. REFS
@@ -55,7 +44,7 @@ export function useSocket(
     }
 
     const playConnectSound = () => {
-        if (!canPlayAudio("alert")) return;
+        if (!canPlayAudio("alerts")) return;
 
         try {
             const audio = new Audio("/connect.mp3");
@@ -94,6 +83,13 @@ export function useSocket(
     // 4. MAIN SOCKET LIFECYCLE
     // ==========================================================================================================================================
 
+    function disconnect() {
+        if (socketRef.current) {
+            socketRef.current.disconnect();
+            socketRef.current = null;
+        }
+    }
+
     useEffect(() => {
         // If there is no username yet, abort the connection and wait!
         if (!username) return;
@@ -122,7 +118,6 @@ export function useSocket(
         });
 
         socketRef.current.on("connect", () => {
-            setMyId(socketRef.current.id);
             // Once physically connected, formally request to join the specific room code
             socketRef.current.emit("join-room", { 
                 roomCode: code, 
@@ -273,4 +268,6 @@ export function useSocket(
         };
 
     }, [code, username]); // Re-run this massive effect ONLY if the room code changes
+
+    return { disconnect };
 }
