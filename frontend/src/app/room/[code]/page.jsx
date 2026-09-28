@@ -75,28 +75,6 @@ export default function RoomPage() {
         router.push("/");
     }
 
-    function handlePaste(e) {
-        if (userCount < 2) return;
-
-        if (e.clipboardData && e.clipboardData.items) {
-            const items = e.clipboardData.items;
-
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.indexOf("image") !== -1) {
-                    e.preventDefault(); 
-                    
-                    const file = items[i].getAsFile();
-
-                    if (file) {
-                        handleFileSelect({ target: { files: [file], value: "" } });
-                    }
-                    
-                    break;
-                }
-            }
-        }
-    }
-
     const {
         handleFileSelect,
         handleIncomingData,
@@ -163,7 +141,6 @@ export default function RoomPage() {
                     messageInput={messageInput}
                     setMessageInput={setMessageInput}
                     handleTyping={handleTyping}
-                    handlePaste={handlePaste}
                     sendMessage={sendMessage}
                 />
             </div>

@@ -12,13 +12,30 @@ export default function ChatInput({
     messageInput,
     setMessageInput,
     handleTyping,
-    handlePaste,
     sendMessage
 }) {
     
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const emojiPickerRef = useRef(null);
     const textAreaRef = useRef(null);
+
+    function handlePaste(e) {
+        if (userCount < 2) return;
+
+        if (e.clipboardData && e.clipboardData.items) {
+            const items = e.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf("image") !== -1) {
+                    e.preventDefault();
+                    const file = items[i].getAsFile();
+                    if (file) {
+                        handleFileSelect({ target: { files: [file], value: "" } });
+                    }
+                    break;
+                }
+            }
+        }
+    }
 
     useEffect(() => {
         if (textAreaRef.current) {
