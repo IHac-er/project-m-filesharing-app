@@ -28,9 +28,6 @@
   margin: 0;
   letter-spacing: 1px;
   opacity: 0.9;
-  /* This creates that exact soft white/blue ambient glow from the image */
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 
-               0 0 30px rgba(59, 130, 246, 0.4); 
 }
 
 /* GROUPS THE RIGHT SIDE HEADER ITEMS */
@@ -78,9 +75,7 @@
 
 .settingsButton:hover {
   opacity: 1; /* Brightens up on hover */
-  background: rgba(255, 255, 255, 0.05); /* Very faint glass background */
   transform: rotate(180deg); /* A nice touch: the gear actually spins when hovered! */
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 /* #endregion HEADER */
 
@@ -180,9 +175,8 @@
   transition: all 0.2s ease;
 }
 
-.primaryButton:hover {
-  transform: translateY(-2px); 
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+.primaryButton:active {
+  transform: translateY(3px);
 }
 
 .glowButton {
@@ -257,14 +251,11 @@
 .roomIcon {
   color: #3b82f6; /* Brand blue */
   opacity: 0.8;
-  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.4)); /* Soft blue glow */
   transition: all 0.3s ease;
 }
 
 .cardSection:hover .roomIcon {
   opacity: 1;
-  transform: translateY(-2px) scale(1.05); /* Slight pop when the user hovers over the left side */
-  filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.6));
 }
 /* #endregion CARD CONTAINER */
 
