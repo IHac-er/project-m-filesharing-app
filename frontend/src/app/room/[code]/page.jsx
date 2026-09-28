@@ -11,6 +11,7 @@ import { useWebRTC } from "@/hooks/useWebRTC";
 import { useSocket } from "@/hooks/useSocket";
 import { useAudioSettings } from "@/hooks/useAudioSettings"; 
 import { useChatPersistence } from "@/hooks/useChatPersistence";
+import { useToast } from "@/hooks/useToast";
 
 import CodeBlock from "./_components/CodeBlock";
 import ShareModal from "./_components/ShareModal";
@@ -55,7 +56,7 @@ export default function RoomPage() {
 
     // -- UI States --
     const [transferProgress, setTransferProgress] = useState(null);
-    const [toastMessage, setToastMessage] = useState("");
+    const { toastMessage, showToast } = useToast();
 
     // -- Share States --
     const [showShareModal, setShowShareModal] = useState(false);
@@ -128,15 +129,6 @@ export default function RoomPage() {
 
         // If the pipe is open and the file is safe, hand it off!
         handleFileSelect(e);
-    }
-
-    /**
-     * Displays a temporary success/error banner at the top of the screen.
-     * @param {string} message - The text to display
-     */
-    function showToast(message) {
-        setToastMessage(message);
-        setTimeout(() => setToastMessage(""), 3000);
     }
     
 
