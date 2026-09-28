@@ -9,8 +9,9 @@ import CryptoJS from "crypto-js";
 import { useFileTransfer } from "@/hooks/useFileTransfer";
 import { useWebRTC } from "@/hooks/useWebRTC";
 import { useSocket } from "@/hooks/useSocket";
-import { CodeBlock } from "./_components/CodeBlock";
+import { useAudioSettings } from "@/hooks/useAudioSettings"; 
 
+import CodeBlock from "./_components/CodeBlock";
 import ShareModal from "./_components/ShareModal";
 import Header from "./_components/Header";
 import SettingsModal from "./_components/SettingsModal";
@@ -61,13 +62,8 @@ export default function RoomPage() {
     const [showShareModal, setShowShareModal] = useState(false);
     const [shareUrl, setShareUrl] = useState("");
 
-    // -- Settings Modal & Audio 
     const [showSettings, setShowSettings] = useState(false);
-    const [audioSettings, setAudioSettings] = useState({
-        master: true,
-        alerts: true,
-        messages: true
-    });
+    const { audioSettings, audioSettingsRef, toggleAudio } = useAudioSettings();
 
 
     // ==========================================================================================================================================
@@ -87,10 +83,6 @@ export default function RoomPage() {
 
     // -- UI Refs -- 
     const emojiPickerRef = useRef(null);
-
-    // -- Audio Ref -- 
-    const audioSettingsRef = useRef(audioSettings);
-
 
 
     // ==========================================================================================================================================
@@ -367,15 +359,6 @@ export default function RoomPage() {
         }
     }
 
-    // Toggle audio settings and save globally
-    function toggleAudio(key) {
-        setAudioSettings(prev => {
-            const newState = { ...prev, [key]: !prev[key] };
-            localStorage.setItem("audioSettings", JSON.stringify(newState));
-            return newState;
-        });
-    }
-
     // ==========================================================================================================================================
     // 6. CUSTOM HOOK INVOCATIONS (BUSINESS LOGIC)
     // ==========================================================================================================================================
@@ -530,31 +513,6 @@ export default function RoomPage() {
             document.removeEventListener("keydown", handleInteraction);
         };
     }, [showEmojiPicker]); // Only re-run this if the picker opens or closes
-
-    /**
-     * Loading the user settings for Audio
-     */
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const savedAudio = localStorage.getItem("audioSettings");
-            if (savedAudio) {
-                try {
-                    setAudioSettings(JSON.parse(savedAudio));
-                } catch (error) {
-                    console.warn("Corrupted audio settings detected. Resetting to defaults.");
-                    localStorage.removeItem("audioSettings");
-                }
-            }
-        }
-    }, []);
-
-    /**
-     * Syncs the latest audio settings into a Ref so the Socket hook 
-     * can read them instantly without causing re-renders or stale closures.
-     */
-    useEffect(() => {
-        audioSettingsRef.current = audioSettings;
-    }, [audioSettings]);
 
     return (
         <main 
