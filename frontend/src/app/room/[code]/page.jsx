@@ -13,6 +13,7 @@ import { useAudioSettings } from "@/hooks/useAudioSettings";
 import { useChatPersistence } from "@/hooks/useChatPersistence";
 import { useToast } from "@/hooks/useToast";
 import { useShareLink } from "@/hooks/useShareLink";
+import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 
 import CodeBlock from "./_components/CodeBlock";
 import ShareModal from "./_components/ShareModal";
@@ -53,7 +54,10 @@ export default function RoomPage() {
     const { messages, setMessages, authorId } = useChatPersistence(code);
     const [isTyping, setIsTyping] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [isDragging, setIsDragging] = useState(false);
+    const { isDragging, dragHandlers } = useDragAndDrop(
+        userCount,
+        (file) => safeHandleFileSelect({ target: { files: [file], value: "" } })
+    );
 
     // -- UI States --
     const [transferProgress, setTransferProgress] = useState(null);
@@ -308,36 +312,6 @@ export default function RoomPage() {
         }
     }
 
-    /**
-     * DRAG AND DROP HANDLERS
-     */
-    function handleDragOver(e) {
-        e.preventDefault(); // Prevents the browser from opening the file
-        if (userCount < 2) return; // Don't show the UI if they are alone
-        if (!isDragging) setIsDragging(true);
-    }
-
-    function handleDragLeave(e) {
-        e.preventDefault();
-        // Only hide the overlay if the mouse literally leaves the browser window
-        if (!e.relatedTarget) {
-            setIsDragging(false);
-        }
-    }
-
-    function handleDrop(e) {
-        e.preventDefault();
-        setIsDragging(false);
-
-        if (userCount < 2) return;
-
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            const file = e.dataTransfer.files[0];
-            // CHANGED: Route through our safety wrapper
-            safeHandleFileSelect({ target: { files: [file], value: "" } });
-        }
-    }
-
     // ==========================================================================================================================================
     // 6. CUSTOM HOOK INVOCATIONS (BUSINESS LOGIC)
     // ==========================================================================================================================================
@@ -439,13 +413,8 @@ export default function RoomPage() {
     }, [showEmojiPicker]); // Only re-run this if the picker opens or closes
 
     return (
-        <main 
-            className={styles.page}
-            onDragOver={handleDragOver}
-            onDragEnter={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-        >
+        <main className={styles.page} {...dragHandlers}>
+            
             <Header
                 code={code}
                 showToast={showToast}
