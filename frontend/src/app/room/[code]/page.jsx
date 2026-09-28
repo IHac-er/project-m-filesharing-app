@@ -15,7 +15,6 @@ import { useToast } from "@/hooks/useToast";
 import { useShareLink } from "@/hooks/useShareLink";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 
-import CodeBlock from "./_components/CodeBlock";
 import ShareModal from "./_components/ShareModal";
 import Header from "./_components/Header";
 import SettingsModal from "./_components/SettingsModal";
@@ -194,16 +193,6 @@ export default function RoomPage() {
     }
 
     /**
-     * Converts raw byte sizes into human-readable formats (KB, MB).
-     */
-    function formatFileSize(bytes) {
-        if (!bytes) return "";
-        if (bytes < 1024) return bytes + " B";
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-        return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-    }
-
-    /**
      * Wipes the local session history, completely severs all network connections, 
      * and routes the user back home.
      */
@@ -232,53 +221,6 @@ export default function RoomPage() {
 
         // 5. Navigate away smoothly (SPA routing)
         router.push("/");
-    }
-    
-    /**
-     * Safely parses text and wraps any URLs in clickable <a> tags.
-     * Prevents XSS by using React elements instead of dangerouslySetInnerHTML.
-     */
-    function formatMessageText(text) {
-        // 1. Split the text by backticks.
-        const parts = text.split(/`([^`]+)`/);
-
-        return parts.map((part, index) => {
-            // If the index is odd, it means this piece of text was wrapped in backticks
-            if (index % 2 === 1) {
-                // If the code has line breaks, use our new component!
-                if (part.includes('\n')) {
-                    return <CodeBlock key={index} codeText={part} />;
-                } else {
-                    return (
-                        <code key={index} className={styles.inlineCode}>
-                            {part}
-                        </code>
-                    );
-                }
-            }
-
-            // 2. For standard text (even indices), run our original URL linker!
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            const textParts = part.split(urlRegex);
-
-            return textParts.map((t, i) => {
-                if (t.match(urlRegex)) {
-                    return (
-                        <a 
-                            key={`${index}-${i}`} 
-                            href={t} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className={styles.chatLink}
-                        >
-                            {t}
-                        </a>
-                    );
-                }
-                // Return standard text
-                return t; 
-            });
-        });
     }
 
     /**
@@ -414,7 +356,7 @@ export default function RoomPage() {
 
     return (
         <main className={styles.page} {...dragHandlers}>
-            
+
             <Header
                 code={code}
                 showToast={showToast}
@@ -443,8 +385,6 @@ export default function RoomPage() {
                     ref={messageEndRef}
                     messages={messages}
                     authorId={authorId}
-                    formatFileSize={formatFileSize}
-                    formatMessageText={formatMessageText}
                 />
 
                 <ChatInput

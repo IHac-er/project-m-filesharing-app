@@ -3,9 +3,11 @@
 import { forwardRef } from "react";
 import { FileText, Download } from "lucide-react";
 import styles from "../room.module.css";
+import { formatFileSize } from "@/utils/formatFileSize";
+import { formatMessageText } from "../_utils/formatMessageText";
 
 const MessageList = forwardRef(function MessageList(
-    { messages, authorId, formatFileSize, formatMessageText },
+    { messages, authorId },
     messageEndRef
 ) {
     return (
