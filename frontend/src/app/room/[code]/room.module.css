@@ -25,7 +25,6 @@
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 1px;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* Soft brand glow */
 }
 
 .headerLeft {
@@ -53,8 +52,6 @@
 
 .codePill:hover {
   background: rgba(59, 130, 246, 0.2);
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); 
-  transform: translateY(-1px);
 }
 
 /* THE COPY ICON */
