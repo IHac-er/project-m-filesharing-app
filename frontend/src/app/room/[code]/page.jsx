@@ -8,7 +8,7 @@ import styles from "./room.module.css"
 import { useFileTransfer } from "@/hooks/useFileTransfer";
 import { useWebRTC } from "@/hooks/useWebRTC";
 import { useSocket } from "@/hooks/useSocket";
-import { useAudioSettings } from "@/hooks/useAudioSettings"; 
+import { useAudioSettings } from "@/hooks/useAudioSettings";
 import { useChatPersistence } from "@/hooks/useChatPersistence";
 import { useToast } from "@/hooks/useToast";
 import { useShareLink } from "@/hooks/useShareLink";
@@ -32,18 +32,13 @@ export default function RoomPage() {
     const router = useRouter();
     const params = useParams();
     const code = params.code;
-
     const isCreate = searchParams.get("create");
+
     const { username, showNameModal, tempUsername, setTempUsername, joinWithUsername } = useUsername();
 
-
-    const [userCount, setUserCount] = useState(1);
     const { messages, setMessages, authorId } = useChatPersistence(code);
     const [isTyping, setIsTyping] = useState(false);
-    const { isDragging, dragHandlers } = useDragAndDrop(
-        userCount,
-        (file) => handleFileSelect({ target: { files: [file], value: "" } })
-    );
+    const [userCount, setUserCount] = useState(1);
 
     const { toastMessage, showToast } = useToast();
 
@@ -55,25 +50,6 @@ export default function RoomPage() {
 
     const socketRef = useRef(null);
     const dataChannelRef = useRef(null);
-
-    function handleFileMessage(fileMessage) {
-
-        if (!fileMessage || typeof fileMessage !== "object" || fileMessage.type !== "file") {
-            console.warn("WebRTC: Dropped invalid file message payload");
-            return;
-        }
-
-        setMessages(prev => [...prev, fileMessage]);
-    }
-
-    function leaveRoom() {
-        sessionStorage.removeItem(`chat_${code}`);
-        sessionStorage.removeItem(`author_${code}`);
-        
-        closeConnection();
-        disconnect();
-        router.push("/");
-    }
 
     const {
         handleFileSelect,
@@ -105,6 +81,30 @@ export default function RoomPage() {
         router,
         audioSettingsRef
     });
+
+    const { isDragging, dragHandlers } = useDragAndDrop(
+        userCount,
+        (file) => handleFileSelect({ target: { files: [file], value: "" } })
+    );
+
+    function handleFileMessage(fileMessage) {
+
+        if (!fileMessage || typeof fileMessage !== "object" || fileMessage.type !== "file") {
+            console.warn("WebRTC: Dropped invalid file message payload");
+            return;
+        }
+
+        setMessages(prev => [...prev, fileMessage]);
+    }
+
+    function leaveRoom() {
+        sessionStorage.removeItem(`chat_${code}`);
+        sessionStorage.removeItem(`author_${code}`);
+        
+        closeConnection();
+        disconnect();
+        router.push("/");
+    }
 
     return (
         <main className={styles.page} {...dragHandlers}>
