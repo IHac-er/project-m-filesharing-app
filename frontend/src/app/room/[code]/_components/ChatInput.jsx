@@ -8,7 +8,7 @@ import styles from "../room.module.css";
 export default function ChatInput({
     isTyping,
     userCount,
-    safeHandleFileSelect,
+    handleFileSelect,
     messageInput,
     setMessageInput,
     handleTyping,
@@ -65,7 +65,7 @@ export default function ChatInput({
                         <input
                             type="file"
                             id="file-upload"
-                            onChange={safeHandleFileSelect}
+                            onChange={handleFileSelect}
                             disabled={userCount < 2}
                             className={styles.hiddenFileInput}
                         />

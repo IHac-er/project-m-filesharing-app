@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 
 import styles from "./room.module.css"
@@ -53,7 +53,7 @@ export default function RoomPage() {
     const [isTyping, setIsTyping] = useState(false);
     const { isDragging, dragHandlers } = useDragAndDrop(
         userCount,
-        (file) => safeHandleFileSelect({ target: { files: [file], value: "" } })
+        (file) => handleFileSelect({ target: { files: [file], value: "" } })
     );
 
     // -- UI States --
@@ -96,34 +96,6 @@ export default function RoomPage() {
         }
 
         setMessages(prev => [...prev, fileMessage]);
-    }
-
-    /**
-     * Intercepts file selections to prevent browser memory crashes.
-     * Blocks files larger than 500MB and ensures the P2P channel is open.
-     */
-    function safeHandleFileSelect(e) {
-        // 1. DEFENSIVE GUARD: Is the WebRTC connection actually open?
-        if (!dataChannelRef.current || dataChannelRef.current.readyState !== "open") {
-            showToast("Connection not ready. Please wait a moment.");
-            e.target.value = ""; // Reset the input
-            return;
-        }
-
-        const file = e.target?.files?.[0];
-        if (!file) return;
-
-        // 2. FILE SAFETY: Soft limit (500 MB)
-        const MAX_FILE_SIZE = 500 * 1024 * 1024;
-
-        if (file.size > MAX_FILE_SIZE) {
-            showToast(`File too large! Please keep files under 500MB.`);
-            e.target.value = ""; 
-            return;
-        }
-
-        // If the pipe is open and the file is safe, hand it off!
-        handleFileSelect(e);
     }
 
     /**
@@ -235,8 +207,7 @@ export default function RoomPage() {
                     const file = items[i].getAsFile();
 
                     if (file) {
-                        // CHANGED: Route through our safety wrapper
-                        safeHandleFileSelect({ target: { files: [file], value: "" } });
+                        handleFileSelect({ target: { files: [file], value: "" } });
                     }
                     
                     break; // Only process the first image to prevent accidental spam
@@ -249,11 +220,10 @@ export default function RoomPage() {
     // 6. CUSTOM HOOK INVOCATIONS (BUSINESS LOGIC)
     // ==========================================================================================================================================
 
-    // Manages chunking files, sending them over WebRTC, and tracking progress
     const {
         handleFileSelect,
         handleIncomingData
-    } = useFileTransfer(dataChannelRef, handleFileMessage, setTransferProgress, authorId);
+    } = useFileTransfer(dataChannelRef, handleFileMessage, setTransferProgress, authorId, showToast);
 
     // Manages the ICE candidates, STUN servers, and the direct P2P connection
     const {
@@ -309,7 +279,7 @@ export default function RoomPage() {
                 <ChatInput
                     isTyping={isTyping}
                     userCount={userCount}
-                    safeHandleFileSelect={safeHandleFileSelect}
+                    handleFileSelect={handleFileSelect}
                     messageInput={messageInput}
                     setMessageInput={setMessageInput}
                     handleTyping={handleTyping}
