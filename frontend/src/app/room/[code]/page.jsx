@@ -10,6 +10,7 @@ import { useFileTransfer } from "@/hooks/useFileTransfer";
 import { useWebRTC } from "@/hooks/useWebRTC";
 import { useSocket } from "@/hooks/useSocket";
 import { useAudioSettings } from "@/hooks/useAudioSettings"; 
+import { useChatPersistence } from "@/hooks/useChatPersistence";
 
 import CodeBlock from "./_components/CodeBlock";
 import ShareModal from "./_components/ShareModal";
@@ -43,13 +44,11 @@ export default function RoomPage() {
     // ==========================================================================================================================================
 
     // -- User & Room State --
-    const [authorId, setAuthorId] = useState(null);
     const [userCount, setUserCount] = useState(1);
 
     // -- Chat State --
-    const [messages, setMessages] = useState([]);
-    const [hasLoadedHistory, setHasLoadedHistory] = useState(false);
     const [messageInput, setMessageInput] = useState("");
+    const { messages, setMessages, authorId } = useChatPersistence(code);
     const [isTyping, setIsTyping] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
@@ -417,51 +416,6 @@ export default function RoomPage() {
             messageEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages]);
-
-    /**
-     * Session Load: On mount, check if there is an existing chat history 
-     * in the browser's sessionStorage for this specific room code.
-     */
-    useEffect(() => {
-        const saved = sessionStorage.getItem(`chat_${code}`);
-        if (saved) {
-            try {
-                const parsedMessages = JSON.parse(saved);
-                // Defensive check: Ensure the parsed data is actually an array!
-                if (Array.isArray(parsedMessages)) {
-                    setMessages(parsedMessages);
-                }
-            } catch (error) {
-                console.warn("Corrupted chat history detected. Clearing session data.");
-                sessionStorage.removeItem(`chat_${code}`); // Nuke the bad data so it doesn't crash again
-            }
-        } 
-        setHasLoadedHistory(true);
-    }, [code]);
-
-    /**
-     * Session Save: Whenever messages update, save the array to sessionStorage 
-     * to survive accidental page reloads.
-     */
-    useEffect(() => {
-        if (hasLoadedHistory && messages.length > 0) {
-            sessionStorage.setItem(`chat_${code}`, JSON.stringify(messages));
-        }
-    }, [messages, code, hasLoadedHistory]);
-
-    /**
-     * Author ID Save: Whenever the page refreshes, this ensures the page knows which is whose message 
-     * to align them and survive page reloads. 
-     */
-    useEffect(() => {
-        let storedId = sessionStorage.getItem(`author_${code}`);
-        if (!storedId) {
-            // Generate a random ID the first time they enter the room
-            storedId = "user_" + Math.random().toString(36).substring(2, 10);
-            sessionStorage.setItem(`author_${code}`, storedId)
-        }
-        setAuthorId(storedId);
-    }, [code]);
 
     /**
      * Auto-Resize Textarea: Dynamically adjusts the height of the input box 
