@@ -1,4 +1,3 @@
-// Location: src/app/room/[code]/_components/Header.jsx
 import styles from "../room.module.css"
 
 import { Copy, LogOut, Share2, Settings } from "lucide-react";
@@ -23,7 +22,6 @@ export default function Header({
     return (
         <>
         <header className={styles.header}>
-            {/* LEFT SIDE: Brand & Share Button */}
             <div className={styles.headerLeft}>
                 <div className={styles.brand}>Project-M</div>
 
@@ -45,7 +43,6 @@ export default function Header({
                 </button>
             </div>
 
-            {/* RIGHT SIDE: Settings & Leave Button */}
             <div className={styles.headerRight}>
                 <button
                     className={styles.headerIconButton}
