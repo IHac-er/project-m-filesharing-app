@@ -91,7 +91,7 @@ export default function RoomPage() {
     const { messageInput, setMessageInput, handleTyping, sendMessage } =
         useChatComposer(socketRef, code, username, authorId, showToast);
 
-    const { disconnect } = useSocket(
+    const { disconnect } = useSocket({
         code,
         isCreate,
         username,
@@ -104,7 +104,7 @@ export default function RoomPage() {
         setIsTyping,
         router,
         audioSettingsRef
-    );
+    });
 
     return (
         <main className={styles.page} {...dragHandlers}>

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import CryptoJS from "crypto-js";
 
-export function useSocket(
+export function useSocket({
     code,
     isCreate,
     username,
@@ -15,7 +15,7 @@ export function useSocket(
     setIsTyping,
     router,
     audioSettingsRef
-) {
+}) {
 
     // ==========================================================================================================================================
     // 2. REFS
