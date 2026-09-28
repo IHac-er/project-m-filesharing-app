@@ -1,15 +1,18 @@
 "use client";
 
-import { forwardRef } from "react";
+import { useRef, useEffect } from "react";
 import { FileText, Download } from "lucide-react";
 import styles from "../room.module.css";
 import { formatFileSize } from "@/utils/formatFileSize";
 import { formatMessageText } from "../_utils/formatMessageText";
 
-const MessageList = forwardRef(function MessageList(
-    { messages, authorId },
-    messageEndRef
-) {
+export default function MessageList({ messages, authorId }) {
+    const messageEndRef = useRef(null);
+
+    useEffect(() => {
+        messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
     return (
         <div className={styles.messages}>
             {messages.map((msg, index) => {
@@ -72,6 +75,4 @@ const MessageList = forwardRef(function MessageList(
             <div ref={messageEndRef} />
         </div>
     );
-});
-
-export default MessageList;
+};

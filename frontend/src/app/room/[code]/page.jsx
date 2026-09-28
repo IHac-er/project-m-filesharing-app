@@ -77,9 +77,6 @@ export default function RoomPage() {
     const socketRef = useRef(null);
     const dataChannelRef = useRef(null);
 
-    // -- DOM Refs --
-    const messageEndRef = useRef(null);
-
     // -- Timer Refs --
     const typingTimeoutRef = useRef(null);
 
@@ -299,15 +296,6 @@ export default function RoomPage() {
         }
     }, []);
 
-    /**
-     * Auto-Scroll: Snaps the chat window to the bottom whenever a new message arrives.
-     */
-    useEffect(() => {
-        if (messageEndRef.current) {
-            messageEndRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-    }, [messages]);
-
     return (
         <main className={styles.page} {...dragHandlers}>
 
@@ -336,7 +324,6 @@ export default function RoomPage() {
 
             <div className={styles.chatContainer}>
                 <MessageList
-                    ref={messageEndRef}
                     messages={messages}
                     authorId={authorId}
                 />
