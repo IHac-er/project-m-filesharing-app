@@ -54,7 +54,7 @@ export function useSocket(
     }
 
     const playConnectSound = () => {
-        if (!canPlayAudio("alert")) return;
+        if (!canPlayAudio("alerts")) return;
 
         try {
             const audio = new Audio("/connect.mp3");

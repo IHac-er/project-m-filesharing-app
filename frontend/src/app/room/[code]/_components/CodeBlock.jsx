@@ -5,7 +5,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import styles from "../room.module.css"
 import { CheckCircle, Copy } from "lucide-react";
 
-export const CodeBlock = ({ codeText }) => {
+const CodeBlock = ({ codeText }) => {
     const [copied, setCopied] = useState(false);
 
     let language = "javascript";
@@ -48,3 +48,5 @@ export const CodeBlock = ({ codeText }) => {
         </div>
     );
 };
+
+export default CodeBlock;
