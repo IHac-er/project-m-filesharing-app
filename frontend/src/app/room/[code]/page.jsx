@@ -28,9 +28,6 @@ import ChatInput from "./_components/ChatInput";
 
 export default function RoomPage() {
 
-    // ==========================================================================================================================================
-    // 2. ROUTING & PARAMS
-    // ==========================================================================================================================================
     const searchParams = useSearchParams();
     const router = useRouter();
     const params = useParams();
@@ -40,14 +37,7 @@ export default function RoomPage() {
     const { username, showNameModal, tempUsername, setTempUsername, joinWithUsername } = useUsername();
 
 
-    // ==========================================================================================================================================
-    // 3. REACT STATE MANAGEMENT
-    // ==========================================================================================================================================
-
-    // -- User & Room State --
     const [userCount, setUserCount] = useState(1);
-
-    // -- Chat State --
     const { messages, setMessages, authorId } = useChatPersistence(code);
     const [isTyping, setIsTyping] = useState(false);
     const { isDragging, dragHandlers } = useDragAndDrop(
@@ -55,37 +45,20 @@ export default function RoomPage() {
         (file) => handleFileSelect({ target: { files: [file], value: "" } })
     );
 
-    // -- UI States --
     const [transferProgress, setTransferProgress] = useState(null);
     const { toastMessage, showToast } = useToast();
 
-    // -- Share States --
     const [showShareModal, setShowShareModal] = useState(false);
     const { shareUrl, copyShareLink } = useShareLink(code, showToast);
 
     const [showSettings, setShowSettings] = useState(false);
     const { audioSettings, audioSettingsRef, toggleAudio } = useAudioSettings();
 
-
-    // ==========================================================================================================================================
-    // 4. REFS (MUTABLE STATE WITHOUT RE-RENDERS)
-    // ==========================================================================================================================================
-
-    // -- Network Refs --
     const socketRef = useRef(null);
     const dataChannelRef = useRef(null);
 
-
-    // ==========================================================================================================================================
-    // 5. EVENT HANDLERS & HELPERS
-    // ==========================================================================================================================================
-
-    /**
-     * Appends an incoming or successfully sent file to the chat window.
-     */
     function handleFileMessage(fileMessage) {
 
-        // DEFENSIVE GUARD: Ensure it's a valid file object before updating React state
         if (!fileMessage || typeof fileMessage !== "object" || fileMessage.type !== "file") {
             console.warn("WebRTC: Dropped invalid file message payload");
             return;
@@ -103,23 +76,15 @@ export default function RoomPage() {
         router.push("/");
     }
 
-    /**
-     * Intercepts Ctrl+V / Cmd+V on the text input.
-     * If the clipboard contains an image, it captures the file and routes it 
-     * directly into the WebRTC file transfer pipeline.
-     */
     function handlePaste(e) {
-        // Safety check: Make sure we have a second user, otherwise don't allow sending!
         if (userCount < 2) return;
 
-        // Dig into the browser's clipboard payload
         if (e.clipboardData && e.clipboardData.items) {
             const items = e.clipboardData.items;
 
             for (let i = 0; i < items.length; i++) {
-                // Check if the pasted item is an image
                 if (items[i].type.indexOf("image") !== -1) {
-                    e.preventDefault(); // Stop the browser from trying to paste raw binary into the text box
+                    e.preventDefault(); 
                     
                     const file = items[i].getAsFile();
 
@@ -127,7 +92,7 @@ export default function RoomPage() {
                         handleFileSelect({ target: { files: [file], value: "" } });
                     }
                     
-                    break; // Only process the first image to prevent accidental spam
+                    break;
                 }
             }
         }
@@ -138,7 +103,6 @@ export default function RoomPage() {
         handleIncomingData
     } = useFileTransfer(dataChannelRef, handleFileMessage, setTransferProgress, authorId, showToast);
 
-    // Manages the ICE candidates, STUN servers, and the direct P2P connection
     const {
         peerRef,
         createPeerConnection,
@@ -149,7 +113,6 @@ export default function RoomPage() {
     const { messageInput, setMessageInput, handleTyping, sendMessage } =
         useChatComposer(socketRef, code, username, authorId, showToast);
 
-    // Manages the Socket.io connection to the Node.js server for signaling/chat
     const { disconnect } = useSocket(
         code,
         isCreate,
