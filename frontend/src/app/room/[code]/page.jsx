@@ -14,6 +14,7 @@ import { useChatPersistence } from "@/hooks/useChatPersistence";
 import { useToast } from "@/hooks/useToast";
 import { useShareLink } from "@/hooks/useShareLink";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
+import { useUsername } from "@/hooks/useUsername";
 
 import ShareModal from "./_components/ShareModal";
 import Header from "./_components/Header";
@@ -33,12 +34,10 @@ export default function RoomPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const params = useParams();
-    const code = params.code; // The 4-digit room code from the URL
+    const code = params.code;
 
     const isCreate = searchParams.get("create");
-    const [username, setUsername] = useState("");
-    const [showNameModal, setShowNameModal] = useState(false);
-    const [tempUsername, setTempUsername] = useState("");
+    const { username, showNameModal, tempUsername, setTempUsername, joinWithUsername } = useUsername();
 
 
     // ==========================================================================================================================================
@@ -279,23 +278,6 @@ export default function RoomPage() {
         audioSettingsRef
     );
 
-
-    // ==========================================================================================================================================
-    // 7. LIFECYCLE EFFECTS (USE-EFFECTS)
-    // ==========================================================================================================================================
-
-    /**
-     * Checks if username exists, else opens a modal to force user to enter username
-     */
-    useEffect(() => {
-        const storedName = localStorage.getItem("username");
-        if (storedName) {
-            setUsername(storedName); // They have a name, let them in!
-        } else {
-            setShowNameModal(true);  // Direct link visitor: Intercept them!
-        }
-    }, []);
-
     return (
         <main className={styles.page} {...dragHandlers}>
 
@@ -314,11 +296,7 @@ export default function RoomPage() {
                     setTempUsername={setTempUsername}
                     audioSettings={audioSettings}
                     toggleAudio={toggleAudio}
-                    onJoin={(name) => {
-                        localStorage.setItem("username", name);
-                        setUsername(name);
-                        setShowNameModal(false);
-                    }}
+                    onJoin={joinWithUsername}
                 />
             )}
 
