@@ -1,6 +1,8 @@
-import { useRef } from "react";
+import { useState, useRef } from "react";   
 
-export function useFileTransfer(dataChannelRef, onFileReceived, setTransferProgress, myId, showToast) {
+export function useFileTransfer(dataChannelRef, onFileReceived, myId, showToast) {
+
+    const [transferProgress, setTransferProgress] = useState(null);
 
     const MAX_BUFFER = 1 * 1024 * 1024;
     const MAX_FILE_SIZE = 500 * 1024 * 1024;
@@ -177,6 +179,7 @@ export function useFileTransfer(dataChannelRef, onFileReceived, setTransferProgr
 
     return {
         handleFileSelect,
-        handleIncomingData
+        handleIncomingData,
+        transferProgress
     };
 }

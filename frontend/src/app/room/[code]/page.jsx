@@ -45,7 +45,6 @@ export default function RoomPage() {
         (file) => handleFileSelect({ target: { files: [file], value: "" } })
     );
 
-    const [transferProgress, setTransferProgress] = useState(null);
     const { toastMessage, showToast } = useToast();
 
     const [showShareModal, setShowShareModal] = useState(false);
@@ -100,8 +99,9 @@ export default function RoomPage() {
 
     const {
         handleFileSelect,
-        handleIncomingData
-    } = useFileTransfer(dataChannelRef, handleFileMessage, setTransferProgress, authorId, showToast);
+        handleIncomingData,
+        transferProgress
+    } = useFileTransfer(dataChannelRef, handleFileMessage, authorId, showToast);
 
     const {
         peerRef,
