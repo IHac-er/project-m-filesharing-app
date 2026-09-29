@@ -8,7 +8,7 @@ export default function ShareModal({ show, onClose, shareUrl, copyShareLink }) {
     if (!show) return null;
 
     return (
-        <div className={styles.overlay} onClick={() => setShowShareModal(false)}>
+        <div className={styles.overlay} onClick={onClose}>
             <div className={styles.shareModal} onClick={(e) => e.stopPropagation()}>
                 <div className={styles.shareHeader}>
                     <h2>Share Room Link</h2>
