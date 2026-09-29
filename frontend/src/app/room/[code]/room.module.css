@@ -367,6 +367,7 @@
 
 /* 3. MY MESSAGES (Sent - Right Side) */
 .myMessage {
+  white-space: pre-wrap;
   align-self: flex-end; /* Pushes the bubble to the right wall */
   background: linear-gradient(135deg, #3b82f6, #2563eb); /* Brand blue */
   color: white;
@@ -376,6 +377,7 @@
 
 /* 4. OTHER MESSAGES (Received - Left Side) */
 .otherMessage {
+  white-space: pre-wrap;
   align-self: flex-start; /* Pushes the bubble to the left wall */
   background: rgba(255, 255, 255, 0.05); /* Dark glass look */
   backdrop-filter: blur(10px);
