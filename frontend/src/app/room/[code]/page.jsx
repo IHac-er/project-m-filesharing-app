@@ -15,6 +15,7 @@ import { useShareLink } from "@/hooks/useShareLink";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { useUsername } from "@/hooks/useUsername";
 import { useChatComposer } from "@/hooks/useChatComposer";
+import { useUnreadIndicator } from "@/hooks/useUnreadIndicator";
 
 import ShareModal from "./_components/ShareModal";
 import Header from "./_components/Header";
@@ -39,6 +40,8 @@ export default function RoomPage() {
     const { messages, setMessages, authorId } = useChatPersistence(code);
     const [isTyping, setIsTyping] = useState(false);
     const [userCount, setUserCount] = useState(1);
+
+    useUnreadIndicator(messages, authorId);
 
     const { toastMessage, showToast } = useToast();
 
