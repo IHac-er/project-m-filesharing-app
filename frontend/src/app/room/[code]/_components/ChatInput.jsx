@@ -90,6 +90,7 @@ export default function ChatInput({
                             htmlFor="file-upload"
                             className={`${styles.iconButton} ${userCount < 2 ? styles.disabled : ''}`}
                             title="Attach a file"
+                            aria-label="Attach a file"
                         >
                             <Paperclip size={22} />
                         </label>
@@ -101,6 +102,7 @@ export default function ChatInput({
                             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                             disabled={userCount < 2}
                             title="Add an emoji"
+                            aria-label="Open emoji picker"
                         >
                             <Smile size={22} />
                         </button>
@@ -128,7 +130,7 @@ export default function ChatInput({
                     placeholder={userCount < 2 ? "Waiting for someone to join..." : "Type your message..."}
                     disabled={userCount < 2}
                     className={styles.chatInput}
-                    rows={1}
+                    rows={1}git
                     onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
                             e.preventDefault();
@@ -142,6 +144,7 @@ export default function ChatInput({
                     disabled={userCount < 2 || !messageInput.trim()}
                     className={styles.sendButton}
                     title="Send message"
+                    aria-label="Send message"
                 >
                     <Send size={20} />
                 </button>

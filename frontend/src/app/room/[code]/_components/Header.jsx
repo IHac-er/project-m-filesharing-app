@@ -29,6 +29,15 @@ export default function Header({
                     className={styles.codePill}
                     onClick={copyRoomCode}
                     title="Copy Room Code"
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Copy room code ${code}`}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            copyRoomCode();
+                        }
+                    }}
                 >
                     <span>Code: <strong>{code}</strong></span>
                     <Copy size={14} className={styles.copyIcon} />
@@ -38,6 +47,7 @@ export default function Header({
                     className={styles.shareIconButton}
                     onClick={() => setShowShareModal(true)}
                     title="Share Room Link"
+                    aria-label="Share room link"
                 >
                     <Share2 size={18} />
                 </button>
@@ -48,6 +58,7 @@ export default function Header({
                     className={styles.headerIconButton}
                     onClick={() => setShowSettings(true)}
                     title="Room Settings"
+                    aria-label="Open room settings"
                 >
                     <Settings size={18} />
                 </button>

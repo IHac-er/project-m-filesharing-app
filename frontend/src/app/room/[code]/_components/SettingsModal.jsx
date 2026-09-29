@@ -36,7 +36,7 @@ export default function SettingsModal({ show, onClose, username, audioSettings, 
                             <div className={styles.tabSection}>
                                 <div className={styles.shareHeader}>
                                     <h2>Audio Preferences</h2>
-                                    <button className={styles.closeModalButton} onClick={onClose}>
+                                    <button className={styles.closeModalButton} onClick={onClose} aria-label="Close settings">
                                         <X size={20} />
                                     </button>
                                 </div>
@@ -96,7 +96,7 @@ export default function SettingsModal({ show, onClose, username, audioSettings, 
                             <div className={styles.tabSection}>
                                 <div className={styles.shareHeader}>
                                     <h2>Profile</h2>
-                                    <button className={styles.closeModalButton} onClick={onClose}>
+                                    <button className={styles.closeModalButton} onClick={onClose} aria-label="Close settings">
                                         <X size={20} />
                                     </button>
                                 </div>

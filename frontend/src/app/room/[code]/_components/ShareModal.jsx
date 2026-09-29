@@ -12,7 +12,7 @@ export default function ShareModal({ show, onClose, shareUrl, copyShareLink }) {
             <div className={styles.shareModal} onClick={(e) => e.stopPropagation()}>
                 <div className={styles.shareHeader}>
                     <h2>Share Room Link</h2>
-                    <button className={styles.closeModalButton} onClick={onClose}>
+                    <button className={styles.closeModalButton} onClick={onClose} aria-label="Close share dialog">
                         <X size={20} />
                     </button>
                 </div>
@@ -31,7 +31,7 @@ export default function ShareModal({ show, onClose, shareUrl, copyShareLink }) {
                         value={shareUrl} 
                         className={styles.shareInput} 
                     />
-                    <button className={styles.shareCopyBtn} onClick={copyShareLink} title="Copy Link">
+                    <button className={styles.shareCopyBtn} onClick={copyShareLink} title="Copy Link" aria-label="Copy share link">
                         <Copy size={18} />
                     </button>
                 </div>
