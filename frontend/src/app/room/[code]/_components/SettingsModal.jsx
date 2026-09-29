@@ -2,10 +2,15 @@
 
 import { useState } from "react";
 import { X, Volume2, User } from "lucide-react";
+
 import styles from "../room.module.css";
+
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 
 export default function SettingsModal({ show, onClose, username, audioSettings, toggleAudio }) {
     const [activeTab, setActiveTab] = useState("audio");
+
+    useEscapeKey(onClose, show);
 
     if (!show) return null;
 

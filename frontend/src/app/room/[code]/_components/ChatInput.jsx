@@ -130,7 +130,7 @@ export default function ChatInput({
                     placeholder={userCount < 2 ? "Waiting for someone to join..." : "Type your message..."}
                     disabled={userCount < 2}
                     className={styles.chatInput}
-                    rows={1}git
+                    rows={1}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
                             e.preventDefault();

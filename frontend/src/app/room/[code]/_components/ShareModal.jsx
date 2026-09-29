@@ -2,9 +2,14 @@
 
 import { X, Copy } from "lucide-react";
 import QRCode from "react-qr-code";
+
 import styles from "../room.module.css";
 
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+
 export default function ShareModal({ show, onClose, shareUrl, copyShareLink }) {
+    useEscapeKey(onClose, show);
+
     if (!show) return null;
 
     return (

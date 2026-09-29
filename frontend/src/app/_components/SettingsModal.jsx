@@ -5,6 +5,8 @@ import { User, Volume2 } from "lucide-react";
 
 import styles from "../page.module.css"
 
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+
 export default function SettingsModal({
     tempUsername,
     setTempUsername,
@@ -14,6 +16,7 @@ export default function SettingsModal({
 }) {
 
     const [activeTab, setActiveTab] = useState("username");
+    useEscapeKey(onClose, true);
 
     const toggleAudio = (key) => {
         setAudioSettings(prev => {

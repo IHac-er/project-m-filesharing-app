@@ -1,6 +1,10 @@
 import styles from "../page.module.css";
 
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+
 export default function TermsModal({ onClose }){
+    useEscapeKey(onClose, true);
+    
     return(
         <div className={styles.overlay}>
             <div className={`${styles.modal} ${styles.termsModal}`}>
