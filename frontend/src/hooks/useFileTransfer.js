@@ -36,7 +36,8 @@ export function useFileTransfer(dataChannelRef, onFileReceived, myId, showToast)
             name: file.name,
             size: file.size,
             url: localUrl,
-            sender: myId
+            sender: myId,
+            timestamp: Date.now()
         });
 
         // Open the progress bar toast
@@ -147,7 +148,8 @@ export function useFileTransfer(dataChannelRef, onFileReceived, myId, showToast)
                     name: incomingFileRef.current.name,
                     size: incomingFileRef.current.size,
                     url: url,
-                    sender: "peer"
+                    sender: "peer",
+                    timestamp: Date.now()
                 };
 
                 onFileReceived(fileMessage);

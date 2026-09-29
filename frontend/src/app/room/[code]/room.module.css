@@ -1215,3 +1215,25 @@
   margin-top: 15px;
   line-height: 1.4;
 }
+
+.messageGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.messageTimestamp {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 2px;
+    padding: 0 4px;
+}
+
+.timestampRight {
+    align-self: flex-end;
+    text-align: right;
+}
+
+.timestampLeft {
+    align-self: flex-start;
+    text-align: left;
+}
