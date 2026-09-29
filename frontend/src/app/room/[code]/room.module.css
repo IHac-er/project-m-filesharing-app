@@ -226,6 +226,7 @@
   justify-content: center;
   align-items: center;
   z-index: 3000;
+  animation: overlayFadeIn 0.15s ease-out;
 }
 
 /* THE SHARE MODAL BOX */
@@ -862,6 +863,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000; /* Ensures it sits on top of everything else */
+  animation: overlayFadeIn 0.15s ease-out;
 }
 
 /* THE GLASS MODAL BOX */
@@ -1235,4 +1237,9 @@
 .timestampLeft {
     align-self: flex-start;
     text-align: left;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
