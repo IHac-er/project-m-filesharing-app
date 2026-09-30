@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 
 import styles from "./room.module.css"
@@ -41,7 +41,24 @@ export default function RoomPage() {
     const { messages, setMessages, authorId } = useChatPersistence(code);
     const [isTyping, setIsTyping] = useState(false);
     const [userCount, setUserCount] = useState(1);
-    const { status: connectionStatus, setChannelOpen } = useConnectionStatus(userCount);
+    const { status: connectionStatus, setChannelOpen, setIceState } = useConnectionStatus(userCount);
+    const canTransferFiles = connectionStatus === "connected";
+
+    const prevStatusRef = useRef(connectionStatus);
+
+    useEffect(() => {
+        if (prevStatusRef.current === connectionStatus) return;
+
+        if (connectionStatus === "reconnecting") {
+            setMessages(prev => [...prev, { type: "system", text: "File-transfer connection interrupted. Attempting to reconnect..." }]);
+        } else if (connectionStatus === "failed") {
+            setMessages(prev => [...prev, { type: "system", text: "File-transfer connection lost. Chat still works, but you'll need to leave and rejoin to send files again." }]);
+        } else if (connectionStatus === "connected" && prevStatusRef.current === "reconnecting") {
+            setMessages(prev => [...prev, { type: "system", text: "File-transfer connection restored." }]);
+        }
+
+        prevStatusRef.current = connectionStatus;
+    }, [connectionStatus, setMessages]);
 
     useUnreadIndicator(messages, authorId);
 
@@ -67,7 +84,7 @@ export default function RoomPage() {
         createPeerConnection,
         startWebRTC,
         closeConnection
-    } = useWebRTC(socketRef, code, dataChannelRef, handleIncomingData, setChannelOpen);
+    } = useWebRTC(socketRef, code, dataChannelRef, handleIncomingData, setChannelOpen, setIceState);
 
     const { messageInput, setMessageInput, handleTyping, sendMessage } =
         useChatComposer(socketRef, code, username, authorId, showToast);
@@ -88,7 +105,7 @@ export default function RoomPage() {
     });
 
     const { isDragging, dragHandlers } = useDragAndDrop(
-        userCount,
+        canTransferFiles ? userCount : 1,
         (file) => handleFileSelect({ target: { files: [file], value: "" } })
     );
 
@@ -143,6 +160,7 @@ export default function RoomPage() {
                 <ChatInput
                     isTyping={isTyping}
                     userCount={userCount}
+                    canTransferFiles={canTransferFiles}
                     handleFileSelect={handleFileSelect}
                     messageInput={messageInput}
                     setMessageInput={setMessageInput}

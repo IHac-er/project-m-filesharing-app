@@ -1307,3 +1307,12 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
 }
+
+.statusReconnecting .statusDot {
+    background: #f97316;
+    animation: statusPulse 1s ease-in-out infinite;
+}
+
+.statusFailed .statusDot {
+    background: #ef4444;
+}

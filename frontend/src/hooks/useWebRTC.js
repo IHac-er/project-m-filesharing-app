@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-export function useWebRTC(socketRef, code, dataChannelRef, handleIncomingData, onChannelOpenChange) {
+export function useWebRTC(socketRef, code, dataChannelRef, handleIncomingData, onChannelOpenChange, onIceStateChange) {
 
     const peerRef = useRef(null);
 
@@ -19,6 +19,10 @@ export function useWebRTC(socketRef, code, dataChannelRef, handleIncomingData, o
                     candidate: event.candidate
                 });
             }
+        };
+
+        peerRef.current.oniceconnectionstatechange = () => {
+            onIceStateChange?.(peerRef.current.iceConnectionState);
         };
 
         peerRef.current.ondatachannel = (event) => {

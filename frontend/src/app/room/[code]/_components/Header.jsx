@@ -5,7 +5,9 @@ import { Copy, LogOut, Share2, Settings } from "lucide-react";
 const STATUS_CONFIG = {
     waiting: { label: "Waiting for someone to join", className: "statusWaiting" },
     connecting: { label: "Connecting...", className: "statusConnecting" },
-    connected: { label: "Connected", className: "statusConnected" }
+    connected: { label: "Connected", className: "statusConnected" },
+    reconnecting: { label: "Reconnecting...", className: "statusReconnecting" },
+    failed: { label: "File transfer unavailable", className: "statusFailed" }
 };
 
 export default function Header({
