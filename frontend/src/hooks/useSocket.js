@@ -85,6 +85,7 @@ export function useSocket({
 
     function disconnect() {
         if (socketRef.current) {
+            socketRef.current.emit("leaving-room");
             socketRef.current.disconnect();
             socketRef.current = null;
         }
@@ -246,7 +247,7 @@ export function useSocket({
          * --------------------------------------
          */
 
-        socketRef.current.on("user-disconnected", (username) => {
+        socketRef.current.on("user-left", (username) => {
             playDisconnectSound();
             setMessages(prev => [
                 ...prev,
@@ -255,19 +256,26 @@ export function useSocket({
                     text: `${username} left`
                 }
             ]);
-
-            // Note: In a production app, you might also want to close the peerConnection 
-            // and dataChannel here so it perfectly resets if someone else joins!
         });
 
-        // Cleanup function: Runs automatically when the component unmounts (e.g., user leaves page)
+        socketRef.current.on("user-disconnected-unexpectedly", (username) => {
+            playDisconnectSound();
+            setMessages(prev => [
+                ...prev,
+                {
+                    type: "system",
+                    text: `${username} was disconnected unexpectedly`
+                }
+            ]);
+        });
+
         return () => {
             if (socketRef.current) {
                 socketRef.current.disconnect();
             }
         };
 
-    }, [code, username]); // Re-run this massive effect ONLY if the room code changes
+    }, [code, username]);
 
     return { disconnect };
 }

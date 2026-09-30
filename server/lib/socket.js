@@ -10,6 +10,10 @@ const io = Server(server, {
 
 io.on("connection", (socket) => {
 
+    socket.on("leaving-room", () => {
+        socket.leftGracefully = true;
+    });
+
     socket.on("join-room", (data) => {
         if (!data || typeof data.roomCode !== "string") {
             return;
@@ -98,9 +102,11 @@ io.on("connection", (socket) => {
     });
     
     socket.on("disconnecting", () => {
+        const leaveEvent = socket.leftGracefully ? "user-left" : "user-disconnected-unexpectedly";
+
         socket.rooms.forEach((roomCode) => {
             if (roomCode !== socket.id) {
-                socket.to(roomCode).emit("user-disconnected", socket.username);
+                socket.to(roomCode).emit(leaveEvent, socket.username);
 
                 const roomData = io.sockets.adapter.rooms.get(roomCode);
                 const count = roomData ? roomData.size - 1 : 0;
