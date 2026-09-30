@@ -1273,3 +1273,37 @@
 .scrollToBottomButton:hover {
     background: rgba(50, 50, 50, 0.95);
 }
+
+.statusPill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.statusDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.statusWaiting .statusDot {
+    background: #9ca3af;
+}
+
+.statusConnecting .statusDot {
+    background: #facc15;
+    animation: statusPulse 1s ease-in-out infinite;
+}
+
+.statusConnected .statusDot {
+    background: #22c55e;
+}
+
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}

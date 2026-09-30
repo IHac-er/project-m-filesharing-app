@@ -2,12 +2,19 @@ import styles from "../room.module.css"
 
 import { Copy, LogOut, Share2, Settings } from "lucide-react";
 
+const STATUS_CONFIG = {
+    waiting: { label: "Waiting for someone to join", className: "statusWaiting" },
+    connecting: { label: "Connecting...", className: "statusConnecting" },
+    connected: { label: "Connected", className: "statusConnected" }
+};
+
 export default function Header({
     code,
     showToast,
     setShowShareModal,
     setShowSettings,
-    leaveRoom
+    leaveRoom,
+    connectionStatus
 }) {
 
     async function copyRoomCode() {
@@ -24,6 +31,13 @@ export default function Header({
         <header className={styles.header}>
             <div className={styles.headerLeft}>
                 <div className={styles.brand}>Project-M</div>
+
+                {connectionStatus && (
+                    <div className={`${styles.statusPill} ${styles[STATUS_CONFIG[connectionStatus].className]}`}>
+                        <span className={styles.statusDot}></span>
+                        {STATUS_CONFIG[connectionStatus].label}
+                    </div>
+                )}
 
                 <div
                     className={styles.codePill}

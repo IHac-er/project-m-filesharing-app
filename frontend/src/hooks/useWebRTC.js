@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-export function useWebRTC(socketRef, code, dataChannelRef, handleIncomingData) {
+export function useWebRTC(socketRef, code, dataChannelRef, handleIncomingData, onChannelOpenChange) {
 
     const peerRef = useRef(null);
 
@@ -26,10 +26,14 @@ export function useWebRTC(socketRef, code, dataChannelRef, handleIncomingData) {
 
             dataChannelRef.current.onopen = () => {
                 console.log("DataChannel open");
+                onChannelOpenChange?.(true);
+            };
+
+            dataChannelRef.current.onclose = () => {
+                onChannelOpenChange?.(false);
             };
 
             dataChannelRef.current.onmessage = handleIncomingData;
-
         };
     }
 
@@ -50,7 +54,11 @@ export function useWebRTC(socketRef, code, dataChannelRef, handleIncomingData) {
 
         dataChannelRef.current = peerRef.current.createDataChannel("fileChannel");
         dataChannelRef.current.onopen = () => {
-            console.log("DataChannel open");
+            onChannelOpenChange?.(true);
+        };
+
+        dataChannelRef.current.onclose = () => {
+            onChannelOpenChange?.(false);
         };
 
         dataChannelRef.current.onmessage = handleIncomingData;

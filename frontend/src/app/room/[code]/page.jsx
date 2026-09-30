@@ -16,6 +16,7 @@ import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { useUsername } from "@/hooks/useUsername";
 import { useChatComposer } from "@/hooks/useChatComposer";
 import { useUnreadIndicator } from "@/hooks/useUnreadIndicator";
+import { useConnectionStatus } from "@/hooks/useConnectionStatus";
 
 import ShareModal from "./_components/ShareModal";
 import Header from "./_components/Header";
@@ -40,6 +41,7 @@ export default function RoomPage() {
     const { messages, setMessages, authorId } = useChatPersistence(code);
     const [isTyping, setIsTyping] = useState(false);
     const [userCount, setUserCount] = useState(1);
+    const { status: connectionStatus, setChannelOpen } = useConnectionStatus(userCount);
 
     useUnreadIndicator(messages, authorId);
 
@@ -65,7 +67,7 @@ export default function RoomPage() {
         createPeerConnection,
         startWebRTC,
         closeConnection
-    } = useWebRTC(socketRef, code, dataChannelRef, handleIncomingData);
+    } = useWebRTC(socketRef, code, dataChannelRef, handleIncomingData, setChannelOpen);
 
     const { messageInput, setMessageInput, handleTyping, sendMessage } =
         useChatComposer(socketRef, code, username, authorId, showToast);
@@ -118,6 +120,7 @@ export default function RoomPage() {
                 setShowShareModal={setShowShareModal}
                 setShowSettings={setShowSettings}
                 leaveRoom={leaveRoom}
+                connectionStatus={connectionStatus}
             />            
             
             {showNameModal && (
