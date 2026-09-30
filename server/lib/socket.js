@@ -80,6 +80,11 @@ io.on("connection", (socket) => {
         socket.to(room).emit("user-typing", username);
     });
 
+    socket.on("message-delivered", ({ room, id }) => {
+        if (!room || !id) return;
+        socket.to(room).emit("message-delivered", id);
+    });
+
     socket.on("stop-typing", (room) => {
         socket.to(room).emit("user-stop-typing");
     });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { FileText, Download, ArrowDown } from "lucide-react";
+import { FileText, Download, Check, CheckCheck, ArrowDown } from "lucide-react";
 
 import styles from "../room.module.css";
 
@@ -120,6 +120,11 @@ export default function MessageList({ messages, authorId }) {
                                 {showTimestamp && (
                                     <div className={`${styles.messageTimestamp} ${isMine ? styles.timestampRight : styles.timestampLeft}`}>
                                         {formatTimestamp(msg.timestamp)}
+                                        {isMine && msg.status && (
+                                            msg.status === "delivered"
+                                                ? <CheckCheck size={12} className={styles.deliveredIcon} />
+                                                : <Check size={12} className={styles.sentIcon} />
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -134,6 +139,11 @@ export default function MessageList({ messages, authorId }) {
                             {showTimestamp && (
                                 <div className={`${styles.messageTimestamp} ${isMine ? styles.timestampRight : styles.timestampLeft}`}>
                                     {formatTimestamp(msg.timestamp)}
+                                    {isMine && msg.status && (
+                                        msg.status === "delivered"
+                                            ? <CheckCheck size={12} className={styles.deliveredIcon} />
+                                            : <Check size={12} className={styles.sentIcon} />
+                                    )}
                                 </div>
                             )}
                         </div>

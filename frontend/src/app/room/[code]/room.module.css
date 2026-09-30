@@ -1223,10 +1223,13 @@
 }
 
 .messageTimestamp {
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.4);
-    margin-top: 2px;
-    padding: 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 2px;
+  padding: 0 4px;
 }
 
 .timestampRight {
@@ -1315,4 +1318,12 @@
 
 .statusFailed .statusDot {
     background: #ef4444;
+}
+
+.sentIcon {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.deliveredIcon {
+    color: #22c55e;
 }

@@ -94,6 +94,7 @@ export default function RoomPage() {
         isCreate,
         username,
         setMessages,
+        authorId,
         setUserCount,
         startWebRTC,
         createPeerConnection,

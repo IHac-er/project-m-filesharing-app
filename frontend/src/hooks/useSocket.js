@@ -7,6 +7,7 @@ export function useSocket({
     isCreate,
     username,
     setMessages,
+    authorId,
     setUserCount,
     startWebRTC,
     createPeerConnection,
@@ -199,12 +200,24 @@ export function useSocket({
             }
 
             // 2. Play the notification sound
-            if (message.sender !== socketRef.current.id) {
-                 playMessageSound();
-            }
+            const isFromPeer = message.sender !== authorId;
+
+            if (isFromPeer) {
++                playMessageSound();
+             }
             
             // 3. Save to state
             setMessages(prev => [...prev, message]);
+
+            if (isFromPeer) {
+                socketRef.current.emit("message-delivered", { room: code, id: message.id });
+            }
+        });
+
+        socketRef.current.on("message-delivered", (id) => {
+            setMessages(prev => prev.map(msg =>
+                msg.id === id ? { ...msg, status: "delivered" } : msg
+            ));
         });
 
         /**
