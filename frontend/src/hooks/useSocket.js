@@ -7,6 +7,7 @@ export function useSocket({
     isCreate,
     username,
     setMessages,
+    authorId,
     setUserCount,
     startWebRTC,
     createPeerConnection,
@@ -85,6 +86,7 @@ export function useSocket({
 
     function disconnect() {
         if (socketRef.current) {
+            socketRef.current.emit("leaving-room");
             socketRef.current.disconnect();
             socketRef.current = null;
         }
@@ -198,12 +200,24 @@ export function useSocket({
             }
 
             // 2. Play the notification sound
-            if (message.sender !== socketRef.current.id) {
-                 playMessageSound();
-            }
+            const isFromPeer = message.sender !== authorId;
+
+            if (isFromPeer) {
++                playMessageSound();
+             }
             
             // 3. Save to state
             setMessages(prev => [...prev, message]);
+
+            if (isFromPeer) {
+                socketRef.current.emit("message-delivered", { room: code, id: message.id });
+            }
+        });
+
+        socketRef.current.on("message-delivered", (id) => {
+            setMessages(prev => prev.map(msg =>
+                msg.id === id ? { ...msg, status: "delivered" } : msg
+            ));
         });
 
         /**
@@ -246,7 +260,7 @@ export function useSocket({
          * --------------------------------------
          */
 
-        socketRef.current.on("user-disconnected", (username) => {
+        socketRef.current.on("user-left", (username) => {
             playDisconnectSound();
             setMessages(prev => [
                 ...prev,
@@ -255,19 +269,26 @@ export function useSocket({
                     text: `${username} left`
                 }
             ]);
-
-            // Note: In a production app, you might also want to close the peerConnection 
-            // and dataChannel here so it perfectly resets if someone else joins!
         });
 
-        // Cleanup function: Runs automatically when the component unmounts (e.g., user leaves page)
+        socketRef.current.on("user-disconnected-unexpectedly", (username) => {
+            playDisconnectSound();
+            setMessages(prev => [
+                ...prev,
+                {
+                    type: "system",
+                    text: `${username} was disconnected unexpectedly`
+                }
+            ]);
+        });
+
         return () => {
             if (socketRef.current) {
                 socketRef.current.disconnect();
             }
         };
 
-    }, [code, username]); // Re-run this massive effect ONLY if the room code changes
+    }, [code, username]);
 
     return { disconnect };
 }

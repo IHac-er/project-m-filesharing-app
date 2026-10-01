@@ -3,54 +3,84 @@
 import styles from "../page.module.css"
 
 import { useRouter } from "next/navigation";
-import { AlertCircle, ArrowRight, DoorOpen, Plus } from "lucide-react";
-import { useState } from "react";
+import { AlertCircle, ArrowRight, DoorOpen, Plus, Loader2 } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import ConnectingOverlay from "./ConnectingOverlay";
+
+const FULLSCREEN_DELAY_MS = 2000;
 
 export default function RoomController() {
 
     const [code, setCode] = useState("");
     const [toastMessage, setToastMessage] = useState("");
+    const [isCreating, setIsCreating] = useState(false);
+    const [isJoining, setIsJoining] = useState(false);
+    const [fullScreenAction, setFullScreenAction] = useState(null); // "create" | "join" | null
+    const escalationTimeoutRef = useRef(null);
 
     const router = useRouter();
 
-    async function generateCode(){
-        try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/create-room`);
-        const data = await response.json();
+    useEffect(() => {
+        return () => clearTimeout(escalationTimeoutRef.current);
+    }, []);
 
-        if (data.code) {
-            router.push(`/room/${data.code}?create=true`);
-        } else {
-            showToast("Failed to Create Room! Try Again!");
-        }
-        } catch (error) {
-        showToast("Could not connect to server.")
-        }
+    function endLoading() {
+        clearTimeout(escalationTimeoutRef.current);
+        setFullScreenAction(null);
+        setIsCreating(false);
+        setIsJoining(false);
+    }
+
+    async function generateCode(){
+      if (isCreating || isJoining) return;
+      setIsCreating(true);
+      escalationTimeoutRef.current = setTimeout(() => setFullScreenAction("create"), FULLSCREEN_DELAY_MS);
+      try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/create-room`);
+      const data = await response.json();
+
+      if (data.code) {
+          router.push(`/room/${data.code}?create=true`);
+      } else {
+          showToast("Failed to Create Room! Try Again!");
+          endLoading();
+      }
+      } catch (error) {
+      showToast("Could not connect to server.");
+      endLoading();
+      }
     }
 
     async function joinRoom(){
-        if (/^[0-9A-F]{4}$/.test(code)){
-        const formattedCode = code.toUpperCase();
+      if (isCreating || isJoining) return;
 
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/check-room/${formattedCode}`);
-            const data = await response.json();
+      if (/^[0-9A-F]{4}$/.test(code)){
+      const formattedCode = code.toUpperCase();
+      setIsJoining(true);
+      escalationTimeoutRef.current = setTimeout(() => setFullScreenAction("join"), FULLSCREEN_DELAY_MS);
 
-            if (data.exists) {
-            if (data.isFull) {
-                showToast("This room is already full");
-            } else {
-                router.push(`/room/${formattedCode}`);
-            }
-            } else {
-            showToast("Invalid Room Code! Create a new room or check your code!");
-            }
-        } catch (error) {
-            showToast("Could not connect to server.");
-        }
-        } else {
-        showToast("Please enter a valid 4-character code.");
-        }
+      try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/check-room/${formattedCode}`);
+          const data = await response.json();
+
+          if (data.exists) {
+          if (data.isFull) {
+              showToast("This room is already full");
+              endLoading();
+          } else {
+              router.push(`/room/${formattedCode}`);
+          }
+          } else {
+          showToast("Invalid Room Code! Create a new room or check your code!");
+          endLoading();
+          }
+      } catch (error) {
+          showToast("Could not connect to server.");
+          endLoading();
+      }
+      } else {
+      showToast("Please enter a valid 4-character code.");
+      }
     }
 
     function handleInput(e){
@@ -62,7 +92,7 @@ export default function RoomController() {
     }
 
     function handleKeyDown(e) {
-        if (e.key === "Enter" && code.trim() !== "") {
+        if (e.key === "Enter" && code.trim() !== "" && !isJoining) {
         joinRoom();
         }
     }
@@ -89,8 +119,13 @@ export default function RoomController() {
             <button 
               className={`${styles.primaryButton} ${styles.glowButton}`} 
               onClick={generateCode}
+              disabled={isCreating}
             >
-              Create Room <Plus size={18} strokeWidth={2.5} />
+              {isCreating ? (
+                <>Creating... <Loader2 size={18} strokeWidth={2.5} className={styles.spinnerIcon} /></>
+              ) : (
+                <>Create Room <Plus size={18} strokeWidth={2.5} /></>
+              )}
             </button>
 
             <p className={styles.smallText}>
@@ -115,13 +150,19 @@ export default function RoomController() {
               onKeyDown={handleKeyDown}
               placeholder="----"
               maxLength="4"
+              disabled={isJoining}
             />
 
             <button 
               className={`${styles.primaryButton} ${styles.glowButton}`} 
               onClick={joinRoom}
+              disabled={isJoining}
             >
-              Join Room <ArrowRight size={18} strokeWidth={2.5} />  
+              {isJoining ? (
+                <>Joining... <Loader2 size={18} strokeWidth={2.5} className={styles.spinnerIcon} /></>
+              ) : (
+                <>Join Room <ArrowRight size={18} strokeWidth={2.5} /></>
+              )} 
             </button>
 
             <p className={styles.smallText}>
@@ -139,6 +180,8 @@ export default function RoomController() {
           </div>
         </div>
       )}
+
+      <ConnectingOverlay action={fullScreenAction} />
       </>
     )
 }

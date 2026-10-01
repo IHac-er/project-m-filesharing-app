@@ -33,9 +33,11 @@ export function useChatComposer(socketRef, code, username, authorId, showToast) 
         const encryptedText = CryptoJS.AES.encrypt(messageInput, code).toString();
 
         const messageData = {
+            id: crypto.randomUUID(),
             sender: authorId,
             text: encryptedText,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            status: "sent"
         };
 
         socketRef.current.emit("send-message", {

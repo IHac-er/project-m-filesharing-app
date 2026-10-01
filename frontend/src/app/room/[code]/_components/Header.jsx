@@ -2,12 +2,21 @@ import styles from "../room.module.css"
 
 import { Copy, LogOut, Share2, Settings } from "lucide-react";
 
+const STATUS_CONFIG = {
+    waiting: { label: "Waiting for someone to join", className: "statusWaiting" },
+    connecting: { label: "Connecting...", className: "statusConnecting" },
+    connected: { label: "Connected", className: "statusConnected" },
+    reconnecting: { label: "Reconnecting...", className: "statusReconnecting" },
+    failed: { label: "File transfer unavailable", className: "statusFailed" }
+};
+
 export default function Header({
     code,
     showToast,
     setShowShareModal,
     setShowSettings,
-    leaveRoom
+    leaveRoom,
+    connectionStatus
 }) {
 
     async function copyRoomCode() {
@@ -25,10 +34,26 @@ export default function Header({
             <div className={styles.headerLeft}>
                 <div className={styles.brand}>Project-M</div>
 
+                {connectionStatus && (
+                    <div className={`${styles.statusPill} ${styles[STATUS_CONFIG[connectionStatus].className]}`}>
+                        <span className={styles.statusDot}></span>
+                        {STATUS_CONFIG[connectionStatus].label}
+                    </div>
+                )}
+
                 <div
                     className={styles.codePill}
                     onClick={copyRoomCode}
                     title="Copy Room Code"
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Copy room code ${code}`}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            copyRoomCode();
+                        }
+                    }}
                 >
                     <span>Code: <strong>{code}</strong></span>
                     <Copy size={14} className={styles.copyIcon} />
@@ -38,6 +63,7 @@ export default function Header({
                     className={styles.shareIconButton}
                     onClick={() => setShowShareModal(true)}
                     title="Share Room Link"
+                    aria-label="Share room link"
                 >
                     <Share2 size={18} />
                 </button>
@@ -48,6 +74,7 @@ export default function Header({
                     className={styles.headerIconButton}
                     onClick={() => setShowSettings(true)}
                     title="Room Settings"
+                    aria-label="Open room settings"
                 >
                     <Settings size={18} />
                 </button>

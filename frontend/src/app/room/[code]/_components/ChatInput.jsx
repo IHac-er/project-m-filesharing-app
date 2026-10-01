@@ -8,6 +8,7 @@ import styles from "../room.module.css";
 export default function ChatInput({
     isTyping,
     userCount,
+    canTransferFiles,
     handleFileSelect,
     messageInput,
     setMessageInput,
@@ -83,13 +84,14 @@ export default function ChatInput({
                             type="file"
                             id="file-upload"
                             onChange={handleFileSelect}
-                            disabled={userCount < 2}
+                            disabled={userCount < 2 || !canTransferFiles}
                             className={styles.hiddenFileInput}
                         />
                         <label
                             htmlFor="file-upload"
-                            className={`${styles.iconButton} ${userCount < 2 ? styles.disabled : ''}`}
-                            title="Attach a file"
+                            className={`${styles.iconButton} ${(userCount < 2 || !canTransferFiles) ? styles.disabled : ''}`}
+                            title={userCount < 2 ? "Attach a file" : canTransferFiles ? "Attach a file" : "File transfer isn't ready yet"}
+                            aria-label="Attach a file"
                         >
                             <Paperclip size={22} />
                         </label>
@@ -101,6 +103,7 @@ export default function ChatInput({
                             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                             disabled={userCount < 2}
                             title="Add an emoji"
+                            aria-label="Open emoji picker"
                         >
                             <Smile size={22} />
                         </button>
@@ -142,6 +145,7 @@ export default function ChatInput({
                     disabled={userCount < 2 || !messageInput.trim()}
                     className={styles.sendButton}
                     title="Send message"
+                    aria-label="Send message"
                 >
                     <Send size={20} />
                 </button>
